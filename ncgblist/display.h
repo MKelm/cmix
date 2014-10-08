@@ -8,6 +8,7 @@ void menue_anzeigen(void);
 void eingabe_hinzuf_anzeigen(void);
 void eingabe_loesch_anzeigen(void);
 
+char *dsp_word_wrap(char* buffer, char* string, int line_width);
 void hilfe_anzeigen(int textid);
 void liste_anzeigen(void);
 
