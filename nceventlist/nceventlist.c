@@ -17,6 +17,8 @@ int main(int argc, char *argv[]) {
 
   load_list(user_file, list, &list_length);
 
+  save_list(user_file, list, &list_length);
+
   return 0;
 }
 
@@ -53,6 +55,24 @@ void load_list(char *user_file, struct list_entry list[], int *list_length) {
         *list_length = i+1;
       break;
     }
+    i++;
+  }
+  fclose(fp);
+}
+
+void save_list(char *user_file, struct list_entry list[], int *list_length) {
+  FILE *fp;
+  if ((fp = fopen(user_file, "w+")) == NULL) {
+    fprintf(stderr, "Error while saving data file.\n");
+    exit(EXIT_FAILURE);
+  }
+  int i = 0;
+  while (i < *list_length) {
+    fprintf(fp, "%hd %hd %hd %s %hd %hd %d",
+      list[i].date.day, list[i].date.month, list[i].date.year,
+      list[i].text, list[i].is_birthday, list[i].is_permanent,
+      list[i].last_notification_time
+    );
     i++;
   }
   fclose(fp);

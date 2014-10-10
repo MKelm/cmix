@@ -20,3 +20,5 @@ struct list_entry {
 void get_user_file(char *user_file);
 
 void load_list(char *user_file, struct list_entry list[], int *list_length);
+
+void save_list(char *user_file, struct list_entry list[], int *list_length);
