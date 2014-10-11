@@ -21,10 +21,10 @@ struct list_entry {
 
 #define MAX_FILE_NAME_LENGTH 1024
 
-void get_user_file(char *user_file);
+void get_user_file(void);
 
-void load_list(char *user_file, struct list_entry list[], int *list_length);
+void load_list(void);
 
 int caclulate_next_event_time(struct list_entry current_entry);
 
-void save_list(char *user_file, struct list_entry list[], int *list_length);
+void save_list(void);

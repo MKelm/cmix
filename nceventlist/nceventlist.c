@@ -6,23 +6,26 @@
 #include <time.h>
 #include <sys/stat.h>
 #include "nceventlist.h"
+#include "display.h"
+
+struct list_entry entry_to_change;
+struct list_entry list[MAX_LIST_ENTRIES];
+int list_length = 0;
+
+char user_file[MAX_FILE_NAME_LENGTH];
 
 int main(int argc, char *argv[]) {
-  struct list_entry list[MAX_LIST_ENTRIES];
-  int list_length = 0;
-
-  char user_file[MAX_FILE_NAME_LENGTH];
-  get_user_file(user_file);
+  get_user_file();
   printf("%s\n", user_file);
 
-  load_list(user_file, list, &list_length);
+  load_list();
 
-  save_list(user_file, list, &list_length);
+  save_list();
 
   return 0;
 }
 
-void get_user_file(char *user_file) {
+void get_user_file(void) {
   char user_dir[MAX_FILE_NAME_LENGTH];
   snprintf(
     user_dir, MAX_FILE_NAME_LENGTH, "%s/%s", getenv("HOME"), ".nceventlist"
@@ -33,7 +36,7 @@ void get_user_file(char *user_file) {
   );
 }
 
-void load_list(char *user_file, struct list_entry list[], int *list_length) {
+void load_list(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "r")) == NULL) {
     if ((fp = fopen(user_file, "w+")) == NULL) {
@@ -53,7 +56,7 @@ void load_list(char *user_file, struct list_entry list[], int *list_length) {
     list[i].next_event_time = caclulate_next_event_time(list[i]);
     if (feof(fp)) {
       if (strlen(list[i].text) > 0)
-        *list_length = i+1;
+        list_length = i+1;
       break;
     }
     i++;
@@ -93,14 +96,14 @@ int caclulate_next_event_time(struct list_entry current_entry) {
 }
 
 
-void save_list(char *user_file, struct list_entry list[], int *list_length) {
+void save_list(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "w+")) == NULL) {
     fprintf(stderr, "Error while saving data file.\n");
     exit(EXIT_FAILURE);
   }
   int i = 0;
-  while (i < *list_length) {
+  while (i < list_length) {
     fprintf(fp, "%hd %hd %hd %hd %hd %s %hd %hd %d",
       list[i].date.day, list[i].date.month, list[i].date.year,
       list[i].time.hour, list[i].time.minute,
