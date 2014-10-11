@@ -67,18 +67,57 @@ void display_menu(void) {
   wrefresh(wsinput);
 }
 
+void display_input_add_event(int is_single) {
+  char text[PHRASES_CHARS_LENGTH], day[3], month[3], year[5], hour[3], minute[3], repeat_cycle[5];
+  curs_set(1);
+
+  wclear(wsinput);
+  if (is_single == 1)
+    mvwaddstr(wsinput, 0, 0, "* Single event");
+  else
+    mvwaddstr(wsinput, 0, 0, "* Repeating event");
+  mvwaddstr(wsinput, 2, 0, "+ Text: ");
+  wrefresh(wsinput);
+  wgetnstr(wsinput, text, PHRASES_CHARS_LENGTH-1);
+
+  mvwaddstr(wsinput, 4, 0, "+ Date:   -  -    ");
+  mvwgetnstr(wsinput, 4, 8, day, 2);
+  mvwgetnstr(wsinput, 4, 11, month, 2);
+  mvwgetnstr(wsinput, 4, 14, year, 4);
+  mvwaddstr(wsinput, 5, 0, "+ Time:   -  ");
+  mvwgetnstr(wsinput, 5, 8, hour, 2);
+  mvwgetnstr(wsinput, 5, 11, minute, 2);
+
+  if (is_single == 0) {
+    mvwaddstr(wsinput, 7, 0, "+ Repeat cycle: ");
+    wgetnstr(wsinput, repeat_cycle, 4);
+  }
+
+  if (strlen(text) > 0 &&
+      strlen(day) > 0 && strlen(month) > 0 && strlen(year) > 0) {
+    strcpy(entry_to_change.text, text);
+    entry_to_change.date.day = atoi(day);
+    entry_to_change.date.month = atoi(month);
+    entry_to_change.date.year = atoi(year);
+    entry_to_change.time.hour = atoi(hour);
+    entry_to_change.time.minute = atoi(minute);
+  }
+
+  curs_set(0);
+}
+
 void display_input_add_birthday_event(void) {
-  char first_name[25], last_name[25], day[3], month[3], year[5];
+  char first_name[PHRASES_CHARS_LENGTH/2], last_name[128], day[3], month[3], year[5];
   curs_set(1);
 
   wclear(wsinput);
   mvwaddstr(wsinput, 0, 0, "* Birthday event");
   mvwaddstr(wsinput, 2, 0, "+ First name: ");
   wrefresh(wsinput);
-  wgetnstr(wsinput, first_name, 24);
+  wgetnstr(wsinput, first_name, 127);
   mvwaddstr(wsinput, 3, 0, "+ Last name: ");
   wrefresh(wsinput);
-  wgetnstr(wsinput, last_name, 24);
+  wgetnstr(wsinput, last_name, 127);
 
   mvwaddstr(wsinput, 4, 0, "+ Date:   -  -    ");
   mvwgetnstr(wsinput, 4, 8, day, 2);
@@ -286,7 +325,7 @@ int display_input(void) {
           case 0:
             // add single event entry
             display_help(2);
-            //display_input_add(); todo
+            display_input_add_event(1);
             display_help(0);
             display_menu();
             //display_list();
@@ -295,7 +334,7 @@ int display_input(void) {
           case 1:
             // add repeating event entry
             display_help(3);
-            //display_input_add(); todo
+            display_input_add_event(0);
             display_help(0);
             display_menu();
             //display_list();
