@@ -58,7 +58,7 @@ void display_menu(void) {
   for (c = 0; c < 4; c++) {
     if (current_context == 0 && c == menu_position)
       wattron(wsinput, A_REVERSE);
-    mvwaddstr(wsinput, 2+(c*2), 2, menu_entries[c]);
+    mvwaddstr(wsinput, 1+(c*2), 2, menu_entries[c]);
     wattroff(wsinput, A_REVERSE);
   }
   wrefresh(wsinput);
@@ -188,11 +188,11 @@ void display_init_windows(void) {
   wrefresh(wlist);
 }
 
-int diplay_input(void) {
+int display_input(void) {
   int ch = getch();
   switch (ch) {
     case KEY_RESIZE:
-      return -4;
+      return -6;
     case KEY_DOWN:
       if (current_context == 0 && menu_position < 3) {
         menu_position++;
@@ -245,19 +245,37 @@ int diplay_input(void) {
         // delete entry
         display_input_del();
         display_list();
-        return -3;
+        return -5;
       }
     case '\n':
       if (current_context == 0) {
         switch (menu_position) {
           case 0:
-            // add single entry
+            // add single event entry
             display_help(1);
             display_input_add();
             display_help(0);
             display_menu();
             //display_list();
             return -2;
+            break;
+          case 1:
+            // add repeating event entry
+            display_help(1);
+            display_input_add();
+            display_help(0);
+            display_menu();
+            //display_list();
+            return -3;
+            break;
+          case 2:
+            // add birthday
+            display_help(1);
+            display_input_add();
+            display_help(0);
+            display_menu();
+            //display_list();
+            return -4;
             break;
           case 3:
             // beenden

@@ -20,9 +20,32 @@ int main(int argc, char *argv[]) {
 
   load_list();
 
+  int input_id = -6;
+  do {
+    if (input_id == -6) {
+      // resize / reset display
+      display_init();
+      display_init_windows();
+      display_menu();
+      display_help(0);
+      display_list();
+    }
+    input_id = display_input();
+
+    if (input_id == -2) {
+      // add single event
+    } else if (input_id == -3) {
+      // add repeating event
+    } else if (input_id == -4) {
+      // add birthday
+    } else if (input_id == -5) {
+      // delete entry
+    }
+  } while (input_id != 0);
+
   save_list();
 
-  return 0;
+  return display_end();
 }
 
 void get_user_file(void) {
