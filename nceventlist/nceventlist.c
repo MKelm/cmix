@@ -6,7 +6,10 @@
 #include <time.h>
 #include <sys/stat.h>
 #include "nceventlist.h"
+#include "phrases.h"
 #include "display.h"
+
+extern struct phrases phrases_data;
 
 struct list_entry entry_to_change;
 struct list_entry list[MAX_LIST_ENTRIES];
@@ -15,6 +18,8 @@ int list_length = 0;
 char user_file[MAX_FILE_NAME_LENGTH];
 
 int main(int argc, char *argv[]) {
+  phrases_load();
+
   get_user_file();
   printf("%s\n", user_file);
 

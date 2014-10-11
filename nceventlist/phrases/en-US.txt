@@ -1,0 +1,13 @@
+Menu
+Help
+List
+No entries available ...
+Add single event
+Add repeating event
+Add birthday event
+Exit
+Navigate with your arrow keys up/down. Enter input mode by pressing enter. Switch to list by pressing right.
+Navigate with your arrow keys up/down. Delete entry by pressing delete. Switch to menu by pressing right.
+Add a single event with a fixed date and time. Confirm by pressing enter.
+Add a repeating event with a start date / time, and a repeat period in days. Confirm by pressing enter.
+Add a birthday date. Confirm by pressing enter.

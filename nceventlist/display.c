@@ -5,7 +5,10 @@
 #include <string.h>
 #include <ctype.h>
 #include "display.h"
+#include "phrases.h"
 #include "nceventlist.h"
+
+extern struct phrases phrases_data;
 
 extern struct list_entry entry_to_change;
 extern struct list_entry list[MAX_LIST_ENTRIES];
@@ -47,12 +50,11 @@ void display_set_list_length(void) {
 
 void display_menu(void) {
   int c;
-  char menu_entries[4][25] = {
-    "* Add single event",
-    "* Add repeating event",
-    "* Add birthday",
-    "* Exit"
-  };
+  char *menu_entries[4];
+  menu_entries[0] = phrases_data.menu_single_event;
+  menu_entries[1] = phrases_data.menu_repeating_event;
+  menu_entries[2] = phrases_data.menu_birthday_event;
+  menu_entries[3] = phrases_data.menu_exit;
 
   wclear(wsinput);
   for (c = 0; c < 4; c++) {
@@ -73,13 +75,12 @@ void display_input_del(void) {
 }
 
 void display_help(int textid) {
-  char help_texts[5][129] = {
-    "Navigate with your arrow keys up/down. Enter input mode by pressing enter. Switch to list by pressing right.",
-    "Navigate with your arrow keys up/down. Delete entry by pressing delete. Switch to menu by pressing right.",
-    "Add a single event with a fixed date and time. Confirm by pressing enter.",
-    "Add a repeating event with a start date / time, and a repeat period in days. Confirm by pressing enter.",
-    "Add a birthday date. Confirm by pressing enter."
-  };
+  char *help_texts[5];
+  help_texts[0] = phrases_data.help_menu;
+  help_texts[1] = phrases_data.help_list;
+  help_texts[2] = phrases_data.help_single_event;
+  help_texts[3] = phrases_data.help_repeating_event;
+  help_texts[4] = phrases_data.help_birthday_event;
 
   wclear(wshelp);
   char buffer[2048];
@@ -148,7 +149,7 @@ void display_list(void) {
     wattroff(wslist, A_REVERSE);
   }
   if (c == 0)
-    mvwaddstr(wslist, 1 + (0 * 2), 1, "No entries available ...");
+    mvwaddstr(wslist, 1 + (0 * 2), 1, phrases_data.info_no_entries);
 
   wrefresh(wslist);
 }
@@ -166,7 +167,7 @@ void display_init_windows(void) {
   wbkgd(wsinput, COLOR_PAIR(1));
   box(winput, 0, 0);
   wattron(winput, A_BOLD);
-  mvwaddstr(winput, 0, 2, "Menu");
+  mvwaddstr(winput, 0, 2, phrases_data.title_menu);
   wattroff(winput, A_BOLD);
   wrefresh(winput);
 
@@ -174,7 +175,7 @@ void display_init_windows(void) {
   wbkgd(wshelp, COLOR_PAIR(1));
   box(whelp, 0, 0);
   wattron(whelp, A_BOLD);
-  mvwaddstr(whelp, 0, 2, "Help");
+  mvwaddstr(whelp, 0, 2, phrases_data.title_help);
   wattroff(whelp, A_BOLD);
   wrefresh(whelp);
 
@@ -182,7 +183,7 @@ void display_init_windows(void) {
   wbkgd(wslist, COLOR_PAIR(1));
   box(wlist, 0, 0);
   wattron(wlist, A_BOLD);
-  mvwaddstr(wlist, 0, 2, "Liste");
+  mvwaddstr(wlist, 0, 2, phrases_data.title_list);
   wattroff(wlist, A_BOLD);
   scrollok(wlist, TRUE);
   wrefresh(wlist);
