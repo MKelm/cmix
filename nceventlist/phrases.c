@@ -1,13 +1,22 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "phrases.h"
 
 struct phrases phrases_data;
+char phrases_lang[56];
+
+void phrases_set_lang(char *lang) {
+  strncpy(phrases_lang, lang, sizeof(phrases_lang));
+}
 
 void phrases_load(void) {
   int linenum = 0, run = 1;
-  char line[1024];
-  FILE *f = fopen(FILE_PHRASES, "r");
+  char line[1024], file_location[256];
+  strncpy(file_location, FILE_DIR_PHRASES, sizeof(file_location));
+  strcat(file_location, phrases_lang);
+  strcat(file_location, FILE_EXT_PHRASES);
+  FILE *f = fopen(file_location, "r");
   do {
     if (fscanf(f, "%[^\n]\n", &line[0]) && strlen(line) > 0) {
       switch (linenum) {

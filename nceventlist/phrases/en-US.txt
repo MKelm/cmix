@@ -7,7 +7,7 @@ Add repeating event
 Add birthday event
 Exit
 Navigate with your arrow keys up/down. Enter input mode by pressing enter. Switch to list by pressing right.
-Navigate with your arrow keys up/down. Delete entry by pressing delete. Switch to menu by pressing right.
+Navigate with your arrow keys up/down. Delete entry by pressing delete. Switch to menu by pressing left.
 Add a single event with a fixed date and time. Set a meaningful description text. Confirm by pressing enter.
 Add a repeating event with a start date / time, and a repeat cycle in days. Set a meaningful description text. Confirm by pressing enter.
 Add a birthday date. Confirm by pressing enter.

@@ -1,4 +1,5 @@
-#define FILE_PHRASES "phrases/en-US.txt"
+#define FILE_DIR_PHRASES "phrases/"
+#define FILE_EXT_PHRASES ".txt"
 
 #define PHRASES_CHARS_LENGTH 256
 
@@ -31,5 +32,7 @@ struct phrases {
   char message_error_fread[PHRASES_CHARS_LENGTH];
   char message_error_fwrite[PHRASES_CHARS_LENGTH];
 };
+
+void phrases_set_lang(char *lang);
 
 void phrases_load(void);

@@ -1,0 +1,27 @@
+Menü
+Hilfe
+Liste
+Keine Einträge verfügbar ...
+Einzel-Event hinzufügen
+Wdhl.-Event hinzufügen
+Geburtstag hinzufügen
+Beenden
+Navigiere mit den Pfeiltasten hoch/runter. Benutze einen Eingabemodus im Menü mit Enter. Wechsel zur Liste mit Pfeiltaste rechts.
+Navigiere mit den Pfeiltasten hoch/runter. Lösche einen Eintrag mit der Entf-Taste. Wechsel zum Menü mit Pfeiltaste links.
+Füge einen Einzel-Event mit einem fixen Datum und Zeit. Setze eine ausdrucksstarke Beschreibung. Bestätige mit Eingabetaste.
+Füge einen Wiederholungs-Event mit Startdatu/-zeit und Wiederholungszyklus in Tagen. Setze eine ausdrucksstarke Beschreibung. Bestätige mit Eingabetaste.
+Füge ein Geburtstag-Event hinzu. Bestätige mit Eingabetaste.
+(GB-Tag)
+(Wdhl.)
+Einzel-Event
+Wiederholungs-Event
+Geburtstag-Event
+Text
+Datum
+Zeit
+Wdhl.-Zyklus
+Vorname
+Name
+Ereignis
+Fehler beim Laden der Datendatei.
+Fehler beim Speichern der Datendatei.
