@@ -93,6 +93,8 @@ void display_input_add_birthday_event(void) {
     entry_to_change.date.day = atoi(day);
     entry_to_change.date.month = atoi(month);
     entry_to_change.date.year = atoi(year);
+    entry_to_change.time.hour = 0;
+    entry_to_change.time.minute = 0;
   }
 
   curs_set(0);

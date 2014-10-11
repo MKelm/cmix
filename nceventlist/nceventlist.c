@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
   load_list();
 
-  int input_id = -6;
+  int input_id = -6, data_changed = 0;
   do {
     if (input_id == -6) {
       // resize / reset display
@@ -37,14 +37,22 @@ int main(int argc, char *argv[]) {
     }
     input_id = display_input();
 
-    if (input_id == -2) {
-      // add single event
-    } else if (input_id == -3) {
-      // add repeating event
-    } else if (input_id == -4) {
-      // add birthday event
-    } else if (input_id == -5) {
-      // delete entry
+    switch (input_id) {
+      case -2: // add single event
+      case -3: // add repeating event
+      case -4: // add birthday event
+        data_changed = add_entry();
+        break;
+      case -5:
+        // delete entry todo
+        break;
+    }
+
+    if (data_changed == 1) {
+      //sort_list();
+      display_set_list_length();
+      display_list();
+      data_changed = 0;
     }
   } while (input_id != 0);
 
@@ -72,9 +80,10 @@ void load_list(void) {
       exit(EXIT_FAILURE);
     }
   }
+
   int i = 0;
   while (1) {
-    fscanf(fp, "%hd %hd %hd %hd %hd %s %hd %hd %d",
+    fscanf(fp, "%hd %hd %hd %hd %hd {%[^}]} %hd %hd %d",
       &list[i].date.day, &list[i].date.month, &list[i].date.year,
       &list[i].time.hour, &list[i].time.minute,
       list[i].text, &list[i].is_birthday, &list[i].repeat_days,
@@ -123,7 +132,6 @@ int caclulate_next_event_time(struct list_entry current_entry) {
   return date_time;
 }
 
-
 void save_list(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "w+")) == NULL) {
@@ -132,7 +140,7 @@ void save_list(void) {
   }
   int i = 0;
   while (i < list_length) {
-    fprintf(fp, "%hd %hd %hd %hd %hd %s %hd %hd %d",
+    fprintf(fp, "%hd %hd %hd %hd %hd {%s} %hd %hd %d",
       list[i].date.day, list[i].date.month, list[i].date.year,
       list[i].time.hour, list[i].time.minute,
       list[i].text, list[i].is_birthday, list[i].repeat_days,
@@ -141,4 +149,34 @@ void save_list(void) {
     i++;
   }
   fclose(fp);
+}
+
+int add_entry(void) {
+
+  if (strlen(entry_to_change.text) > 0 &&
+      entry_to_change.date.day > 0 &&
+      entry_to_change.date.month > 0 &&
+      entry_to_change.date.year > 0) {
+
+    if (list_length + 1 < MAX_LIST_ENTRIES) {
+      strcpy(list[list_length].text, entry_to_change.text);
+      list[list_length].date.day = entry_to_change.date.day;
+      list[list_length].date.month = entry_to_change.date.month;
+      list[list_length].date.year = entry_to_change.date.year;
+      list[list_length].time.hour = entry_to_change.time.hour;
+      list[list_length].time.minute = entry_to_change.time.minute;
+      list[list_length].last_notification_time = -1;
+      list_length++;
+
+      strcpy(entry_to_change.text, "");
+      entry_to_change.date.day = 0;
+      entry_to_change.date.month = 0;
+      entry_to_change.date.year = 0;
+      entry_to_change.time.hour = 0;
+      entry_to_change.time.minute = 0;
+
+      return 1;
+    }
+  }
+  return 0;
 }
