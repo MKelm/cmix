@@ -60,14 +60,42 @@ void display_menu(void) {
   for (c = 0; c < 4; c++) {
     if (current_context == 0 && c == menu_position)
       wattron(wsinput, A_REVERSE);
-    mvwaddstr(wsinput, 1+(c*2), 2, menu_entries[c]);
+    mvwaddstr(wsinput, (c*2), 0, "* ");
+    mvwaddstr(wsinput, (c*2), 2, menu_entries[c]);
     wattroff(wsinput, A_REVERSE);
   }
   wrefresh(wsinput);
 }
 
-void display_input_add(void) {
-  // todo
+void display_input_add_birthday_event(void) {
+  char first_name[25], last_name[25], day[3], month[3], year[5];
+  curs_set(1);
+
+  wclear(wsinput);
+  mvwaddstr(wsinput, 0, 0, "* Birthday event");
+  mvwaddstr(wsinput, 2, 0, "+ First name: ");
+  wrefresh(wsinput);
+  wgetnstr(wsinput, first_name, 24);
+  mvwaddstr(wsinput, 3, 0, "+ Last name: ");
+  wrefresh(wsinput);
+  wgetnstr(wsinput, last_name, 24);
+
+  mvwaddstr(wsinput, 4, 0, "+ Date:   -  -    ");
+  mvwgetnstr(wsinput, 4, 8, day, 2);
+  mvwgetnstr(wsinput, 4, 11, month, 2);
+  mvwgetnstr(wsinput, 4, 14, year, 4);
+
+  if (strlen(first_name) > 0 && strlen(last_name) > 0 &&
+      strlen(day) > 0 && strlen(month) > 0 && strlen(year) > 0) {
+    strcpy(entry_to_change.text, first_name);
+    strcat(entry_to_change.text, " ");
+    strcat(entry_to_change.text, last_name);
+    entry_to_change.date.day = atoi(day);
+    entry_to_change.date.month = atoi(month);
+    entry_to_change.date.year = atoi(year);
+  }
+
+  curs_set(0);
 }
 
 void display_input_del(void) {
@@ -156,9 +184,9 @@ void display_list(void) {
 
 void display_init_windows(void) {
   winput = newwin(halfy, halfx, 0, 0);
-  wsinput = subwin(winput, halfy-2, halfx-2, 1, 1);
+  wsinput = subwin(winput, halfy-3, halfx-3, 2, 2);
   whelp = newwin(halfy, halfx, halfy, 0);
-  wshelp = subwin(whelp, halfy-5, halfx-6, halfy+3, 3);
+  wshelp = subwin(whelp, halfy-3, halfx-3, halfy+2, 2);
   wlist = newwin(maxy, halfx, 0, halfx);
   wslist = subwin(wlist, maxy-2, halfx-2, 1, halfx+1);
   refresh();
@@ -228,6 +256,7 @@ int display_input(void) {
     case KEY_LEFT:
       if (current_context == 1) {
         current_context = 0;
+        display_help(0);
         display_menu();
         display_list();
       }
@@ -236,6 +265,7 @@ int display_input(void) {
     case KEY_RIGHT:
       if (current_context == 0 && list_length > 0) {
         current_context = 1;
+        display_help(1);
         display_menu();
         display_list();
       }
@@ -253,8 +283,8 @@ int display_input(void) {
         switch (menu_position) {
           case 0:
             // add single event entry
-            display_help(1);
-            display_input_add();
+            display_help(2);
+            //display_input_add(); todo
             display_help(0);
             display_menu();
             //display_list();
@@ -262,17 +292,17 @@ int display_input(void) {
             break;
           case 1:
             // add repeating event entry
-            display_help(1);
-            display_input_add();
+            display_help(3);
+            //display_input_add(); todo
             display_help(0);
             display_menu();
             //display_list();
             return -3;
             break;
           case 2:
-            // add birthday
-            display_help(1);
-            display_input_add();
+            // add birthday event entry
+            display_help(4);
+            display_input_add_birthday_event();
             display_help(0);
             display_menu();
             //display_list();

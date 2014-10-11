@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     } else if (input_id == -3) {
       // add repeating event
     } else if (input_id == -4) {
-      // add birthday
+      // add birthday event
     } else if (input_id == -5) {
       // delete entry
     }
