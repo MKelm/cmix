@@ -1,7 +1,7 @@
 # Makefile for nceventlist
 CC = gcc
 CFLAGS = -Wall -ggdb
-LDFLAGS = -lncursesw
+LDFLAGS = -lncursesw -lm
 
 nceventlist : nceventlist.o display.o phrases.o
 	$(CC) nceventlist.o display.o phrases.o -o run $(LDFLAGS)

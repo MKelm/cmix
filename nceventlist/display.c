@@ -4,6 +4,7 @@
 #include <locale.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 #include "display.h"
 #include "phrases.h"
 #include "nceventlist.h"
@@ -16,7 +17,7 @@ extern int list_length;
 extern struct list_entry entry_to_change;
 extern int entry_idx_to_delete;
 
-int maxy, maxx, halfy, halfx;
+int maxy, maxx, halfy, halfx, space_left, space_right;
 WINDOW *winput, *whelp, *wlist;
 WINDOW *wsinput, *wshelp, *wslist;
 
@@ -27,9 +28,13 @@ int current_context, menu_position, list_position, list_offset, list_length_visi
 void display_init() {
   setlocale(LC_ALL, "");
   initscr();
+
   getmaxyx(stdscr, maxy, maxx);
   halfx = maxx >> 1;
   halfy = maxy >> 1;
+  space_left = floor((float)maxx*0.4);
+  space_right = ceil((float)maxx*0.6);
+
   start_color();
   init_pair(1, COLOR_WHITE, COLOR_BLUE);
   curs_set(0);
@@ -181,7 +186,7 @@ void display_help(int textid) {
 
   wclear(wshelp);
   char buffer[2048];
-  mvwaddstr(wshelp, 0, 0, dsp_word_wrap(buffer, help_texts[textid], halfx-6));
+  mvwaddstr(wshelp, 0, 0, dsp_word_wrap(buffer, help_texts[textid], space_left-6));
   wrefresh(wshelp);
 }
 
@@ -253,12 +258,12 @@ void display_list(void) {
 }
 
 void display_init_windows(void) {
-  winput = newwin(halfy, halfx, 0, 0);
-  wsinput = subwin(winput, halfy-3, halfx-3, 2, 2);
-  whelp = newwin(halfy, halfx, halfy, 0);
-  wshelp = subwin(whelp, halfy-3, halfx-3, halfy+2, 2);
-  wlist = newwin(maxy, halfx, 0, halfx);
-  wslist = subwin(wlist, maxy-2, halfx-2, 1, halfx+1);
+  winput = newwin(halfy, space_left, 0, 0);
+  wsinput = subwin(winput, halfy-3, space_left-3, 2, 2);
+  whelp = newwin(halfy, space_left, halfy, 0);
+  wshelp = subwin(whelp, halfy-3, space_left-3, halfy+2, 2);
+  wlist = newwin(maxy, space_right, 0, space_left);
+  wslist = subwin(wlist, maxy-2, space_right-2, 1, space_left+1);
   refresh();
 
   wbkgd(winput, COLOR_PAIR(1));
