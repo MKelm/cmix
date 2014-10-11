@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
   printf("%s\n", user_file);
 
   load_list();
+  sort_list();
 
   int input_id = -6, data_changed = 0;
   do {
@@ -129,14 +130,16 @@ int calculate_next_event_time(struct list_entry *current_entry) {
     while (entry_t < t) {
       entry_t += current_entry->repeat_cycle * 60 * 60 * 24;
     }
-    entry_tm = *localtime(&entry_t);
-    // set current entry time to next
-    current_entry->date.year = entry_tm.tm_year + 1900;
-    current_entry->date.month = entry_tm.tm_mon + 1;
-    current_entry->date.day = entry_tm.tm_mday;
-    current_entry->time.hour = entry_tm.tm_hour;
-    current_entry->time.minute = entry_tm.tm_min;
   }
+
+  entry_tm = *localtime(&entry_t);
+  // set current entry time to next
+  current_entry->date.year = entry_tm.tm_year + 1900;
+  current_entry->date.month = entry_tm.tm_mon + 1;
+  current_entry->date.day = entry_tm.tm_mday;
+  current_entry->time.hour = entry_tm.tm_hour;
+  current_entry->time.minute = entry_tm.tm_min;
+
   return entry_t;
 }
 
@@ -248,7 +251,6 @@ void sort_list(void) {
       tmp_entry.repeat_cycle = list[i].repeat_cycle;
       tmp_entry.next_event_time = list[i].next_event_time;
       tmp_entry.last_notification_time = list[i].last_notification_time;
-
 
       strcpy(list[i].text, list[i+1].text);
       list[i].date.day = list[i+1].date.day;
