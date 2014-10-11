@@ -92,7 +92,7 @@ void load_list(void) {
       &list[i].last_notification_time
     );
     list[i].next_event_time = 0;
-    list[i].next_event_time = caclulate_next_event_time(list[i]);
+    list[i].next_event_time = caclulate_next_event_time(&list[i]);
     if (feof(fp)) {
       if (strlen(list[i].text) > 0)
         list_length = i+1;
@@ -103,35 +103,35 @@ void load_list(void) {
   fclose(fp);
 }
 
-int caclulate_next_event_time(struct list_entry current_entry) {
+int caclulate_next_event_time(struct list_entry *current_entry) {
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
 
   int plus_years = 0;
-  if (current_entry.is_birthday == 1) {
-    if (current_entry.date.month - 1 < tm.tm_mon ||
-        (current_entry.date.month - 1 == tm.tm_mon &&
-         current_entry.date.day < tm.tm_mday)) {
+  if (current_entry->is_birthday == 1) {
+    if (current_entry->date.month - 1 < tm.tm_mon ||
+        (current_entry->date.month - 1 == tm.tm_mon &&
+         current_entry->date.day < tm.tm_mday)) {
       plus_years = 1;
     }
   }
 
-  struct tm new_date_time;
-  new_date_time.tm_year = tm.tm_year + plus_years;
-  new_date_time.tm_mon = current_entry.date.month - 1;
-  new_date_time.tm_mday = current_entry.date.day;
-  new_date_time.tm_hour = current_entry.time.hour;
-  new_date_time.tm_min = current_entry.time.minute;
-  new_date_time.tm_sec = 1;
-  new_date_time.tm_isdst = -1;
-  int date_time = mktime(&new_date_time);
+  struct tm entry_tm;
+  entry_tm.tm_year = tm.tm_year + plus_years;
+  entry_tm.tm_mon = current_entry->date.month - 1;
+  entry_tm.tm_mday = current_entry->date.day;
+  entry_tm.tm_hour = current_entry->time.hour;
+  entry_tm.tm_min = current_entry->time.minute;
+  entry_tm.tm_sec = 1;
+  entry_tm.tm_isdst = -1;
+  time_t entry_t = mktime(&entry_tm);
 
-  if (current_entry.repeat_cycle > 0) {
-    //int current_date_time = mktime(&tm);
-    // todo logic for repeat days
+  if (current_entry->is_birthday == 0 && entry_t < t) {
+    entry_t += current_entry->repeat_cycle * 60 * 60 * 24;
+    entry_tm = *localtime(&entry_t);
+    // todo set current entry to next date/time ?!
   }
-
-  return date_time;
+  return entry_t;
 }
 
 void save_list(void) {

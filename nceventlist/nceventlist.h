@@ -25,7 +25,7 @@ void get_user_file(void);
 
 void load_list(void);
 
-int caclulate_next_event_time(struct list_entry current_entry);
+int caclulate_next_event_time(struct list_entry *current_entry);
 
 void save_list(void);
 
