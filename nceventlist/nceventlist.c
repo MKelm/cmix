@@ -44,6 +44,9 @@ int main(int argc, char *argv[]) {
     notification_service(atoi(argv[2]));
   }
 
+  load_list();
+  sort_list();
+
   int input_id = -6, data_changed = 0;
   do {
     if (input_id == -6) {
@@ -101,7 +104,7 @@ void load_list(void) {
   }
 
   int i = 0;
-  do {
+  while (1) {
     fscanf(fp, "%hd %hd %hd %hd %hd {%[^}]} %hd %hd %d\n",
       &list[i].date.day, &list[i].date.month, &list[i].date.year,
       &list[i].time.hour, &list[i].time.minute,
@@ -109,10 +112,13 @@ void load_list(void) {
       &list[i].last_notification_time
     );
     list[i].next_event_time = calculate_next_event_time(&list[i]);
-    if (strlen(list[i].text) > 0)
-      i++;
-  } while (!feof(fp));
-  list_length = i+1;
+    if (feof(fp)) {
+      if (strlen(list[i].text) > 0)
+        list_length = i+1;
+      break;
+    }
+    i++;
+  }
   fclose(fp);
 }
 
@@ -310,14 +316,19 @@ void send_next_notification(void) {
 
       list[i].last_notification_time = t;
 
-      snprintf(
-        message,
-        sizeof(message),
-        "%d.%d. %s",
-        list[i].date.day, list[i].date.month, list[i].text
-      );
-      if (list[i].is_birthday == 1)
-        strncat(message, phrases_data.entry_birthday, sizeof(message));
+      if (list[i].is_birthday == 1) {
+        snprintf(
+          message, sizeof(message), "%hd.%hd. %s %s",
+          list[i].date.day, list[i].date.month, list[i].text,
+          phrases_data.entry_birthday
+        );
+      } else {
+        snprintf(
+          message, sizeof(message), "%hd.%hd. %hd:%hd %s",
+          list[i].date.day, list[i].date.month,
+          list[i].time.hour, list[i].time.minute, list[i].text
+        );
+      }
 
       snprintf(
         call,

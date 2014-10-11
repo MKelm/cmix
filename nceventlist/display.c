@@ -243,7 +243,6 @@ void display_list(void) {
         phrases_data.entry_birthday : (list[c].repeat_cycle > 0) ?
           phrases_data.entry_repeat : "")
     );
-    // todo time output
     mvwaddstr(wslist, 1 + ((c - list_offset) * 2), 1, text);
     wattroff(wslist, A_REVERSE);
   }
