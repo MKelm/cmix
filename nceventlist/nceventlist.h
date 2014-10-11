@@ -14,7 +14,7 @@ struct list_entry {
   } time;
   char text[MAX_LIST_ENTRY_TEXT_LENGTH];
   short is_birthday;
-  short repeat_days;
+  short repeat_cycle; // in days
   int next_event_time;
   int last_notification_time;
 };

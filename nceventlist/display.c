@@ -101,6 +101,8 @@ void display_input_add_event(int is_single) {
     entry_to_change.date.year = atoi(year);
     entry_to_change.time.hour = atoi(hour);
     entry_to_change.time.minute = atoi(minute);
+    entry_to_change.is_birthday = 0;
+    entry_to_change.repeat_cycle = atoi(repeat_cycle);
   }
 
   curs_set(0);
@@ -115,14 +117,14 @@ void display_input_add_birthday_event(void) {
   mvwaddstr(wsinput, 2, 0, "+ First name: ");
   wrefresh(wsinput);
   wgetnstr(wsinput, first_name, 127);
-  mvwaddstr(wsinput, 3, 0, "+ Last name: ");
+  mvwaddstr(wsinput, 4, 0, "+ Last name: ");
   wrefresh(wsinput);
   wgetnstr(wsinput, last_name, 127);
 
-  mvwaddstr(wsinput, 4, 0, "+ Date:   -  -    ");
-  mvwgetnstr(wsinput, 4, 8, day, 2);
-  mvwgetnstr(wsinput, 4, 11, month, 2);
-  mvwgetnstr(wsinput, 4, 14, year, 4);
+  mvwaddstr(wsinput, 6, 0, "+ Date:   -  -    ");
+  mvwgetnstr(wsinput, 6, 8, day, 2);
+  mvwgetnstr(wsinput, 6, 11, month, 2);
+  mvwgetnstr(wsinput, 6, 14, year, 4);
 
   if (strlen(first_name) > 0 && strlen(last_name) > 0 &&
       strlen(day) > 0 && strlen(month) > 0 && strlen(year) > 0) {
@@ -134,6 +136,8 @@ void display_input_add_birthday_event(void) {
     entry_to_change.date.year = atoi(year);
     entry_to_change.time.hour = 0;
     entry_to_change.time.minute = 0;
+    entry_to_change.is_birthday = 1;
+    entry_to_change.repeat_cycle = 0;
   }
 
   curs_set(0);
@@ -209,9 +213,9 @@ void display_list(void) {
 
     snprintf(
       text, sizeof(text),
-      "* %s, %d.%d.%d",
-      list[c].text,
-      list[c].date.day, list[c].date.month, list[c].date.year
+      "* %d.%d.%d: %s %s",
+      list[c].date.day, list[c].date.month, list[c].date.year, list[c].text,
+      ((list[c].is_birthday == 1) ? "Birthday" : (list[c].repeat_cycle > 0) ? "(R)" : "")
     );
     // todo time output
     mvwaddstr(wslist, 1 + ((c - list_offset) * 2), 1, text);

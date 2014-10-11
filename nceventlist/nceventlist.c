@@ -86,7 +86,7 @@ void load_list(void) {
     fscanf(fp, "%hd %hd %hd %hd %hd {%[^}]} %hd %hd %d",
       &list[i].date.day, &list[i].date.month, &list[i].date.year,
       &list[i].time.hour, &list[i].time.minute,
-      list[i].text, &list[i].is_birthday, &list[i].repeat_days,
+      list[i].text, &list[i].is_birthday, &list[i].repeat_cycle,
       &list[i].last_notification_time
     );
     list[i].next_event_time = 0;
@@ -124,7 +124,7 @@ int caclulate_next_event_time(struct list_entry current_entry) {
   new_date_time.tm_isdst = -1;
   int date_time = mktime(&new_date_time);
 
-  if (current_entry.repeat_days > 0) {
+  if (current_entry.repeat_cycle > 0) {
     //int current_date_time = mktime(&tm);
     // todo logic for repeat days
   }
@@ -143,7 +143,7 @@ void save_list(void) {
     fprintf(fp, "%hd %hd %hd %hd %hd {%s} %hd %hd %d",
       list[i].date.day, list[i].date.month, list[i].date.year,
       list[i].time.hour, list[i].time.minute,
-      list[i].text, list[i].is_birthday, list[i].repeat_days,
+      list[i].text, list[i].is_birthday, list[i].repeat_cycle,
       list[i].last_notification_time
     );
     i++;
@@ -165,6 +165,8 @@ int add_entry(void) {
       list[list_length].date.year = entry_to_change.date.year;
       list[list_length].time.hour = entry_to_change.time.hour;
       list[list_length].time.minute = entry_to_change.time.minute;
+      list[list_length].is_birthday = entry_to_change.is_birthday;
+      list[list_length].repeat_cycle = entry_to_change.repeat_cycle;
       list[list_length].last_notification_time = -1;
       list_length++;
 
@@ -174,6 +176,8 @@ int add_entry(void) {
       entry_to_change.date.year = 0;
       entry_to_change.time.hour = 0;
       entry_to_change.time.minute = 0;
+      entry_to_change.is_birthday = 0;
+      entry_to_change.repeat_cycle = 0;
 
       return 1;
     }
