@@ -42,14 +42,15 @@ void load_list(char *user_file, struct list_entry list[], int *list_length) {
     }
   }
   int i = 0;
-  while(1) {
-    fscanf(fp, "%hd %hd %hd %s %hd %hd %d",
+  while (1) {
+    fscanf(fp, "%hd %hd %hd %hd %hd %s %hd %hd %d",
       &list[i].date.day, &list[i].date.month, &list[i].date.year,
-      list[i].text, &list[i].is_birthday, &list[i].is_permanent,
+      &list[i].time.hour, &list[i].time.minute,
+      list[i].text, &list[i].is_birthday, &list[i].repeat_days,
       &list[i].last_notification_time
     );
     list[i].next_event_time = 0;
-    //liste[i].next_event_time = caclulate_next_event_time(liste[i]);
+    list[i].next_event_time = caclulate_next_event_time(list[i]);
     if (feof(fp)) {
       if (strlen(list[i].text) > 0)
         *list_length = i+1;
@@ -60,6 +61,38 @@ void load_list(char *user_file, struct list_entry list[], int *list_length) {
   fclose(fp);
 }
 
+int caclulate_next_event_time(struct list_entry current_entry) {
+  time_t t = time(NULL);
+  struct tm tm = *localtime(&t);
+
+  int plus_years = 0;
+  if (current_entry.is_birthday == 1) {
+    if (current_entry.date.month - 1 < tm.tm_mon ||
+        (current_entry.date.month - 1 == tm.tm_mon &&
+         current_entry.date.day < tm.tm_mday)) {
+      plus_years = 1;
+    }
+  }
+
+  struct tm new_date_time;
+  new_date_time.tm_year = tm.tm_year + plus_years;
+  new_date_time.tm_mon = current_entry.date.month - 1;
+  new_date_time.tm_mday = current_entry.date.day;
+  new_date_time.tm_hour = current_entry.time.hour;
+  new_date_time.tm_min = current_entry.time.minute;
+  new_date_time.tm_sec = 1;
+  new_date_time.tm_isdst = -1;
+  int date_time = mktime(&new_date_time);
+
+  if (current_entry.repeat_days > 0) {
+    //int current_date_time = mktime(&tm);
+    // todo logic for repeat days
+  }
+
+  return date_time;
+}
+
+
 void save_list(char *user_file, struct list_entry list[], int *list_length) {
   FILE *fp;
   if ((fp = fopen(user_file, "w+")) == NULL) {
@@ -68,9 +101,10 @@ void save_list(char *user_file, struct list_entry list[], int *list_length) {
   }
   int i = 0;
   while (i < *list_length) {
-    fprintf(fp, "%hd %hd %hd %s %hd %hd %d",
+    fprintf(fp, "%hd %hd %hd %hd %hd %s %hd %hd %d",
       list[i].date.day, list[i].date.month, list[i].date.year,
-      list[i].text, list[i].is_birthday, list[i].is_permanent,
+      list[i].time.hour, list[i].time.minute,
+      list[i].text, list[i].is_birthday, list[i].repeat_days,
       list[i].last_notification_time
     );
     i++;
