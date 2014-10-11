@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (data_changed == 1) {
-      //sort_list();
+      sort_list();
       display_set_list_length();
       display_list();
       data_changed = 0;
@@ -91,8 +91,7 @@ void load_list(void) {
       list[i].text, &list[i].is_birthday, &list[i].repeat_cycle,
       &list[i].last_notification_time
     );
-    list[i].next_event_time = 0;
-    list[i].next_event_time = caclulate_next_event_time(&list[i]);
+    list[i].next_event_time = calculate_next_event_time(&list[i]);
     if (feof(fp)) {
       if (strlen(list[i].text) > 0)
         list_length = i+1;
@@ -103,7 +102,7 @@ void load_list(void) {
   fclose(fp);
 }
 
-int caclulate_next_event_time(struct list_entry *current_entry) {
+int calculate_next_event_time(struct list_entry *current_entry) {
   time_t t = time(NULL);
   struct tm tm = *localtime(&t);
 
@@ -122,14 +121,21 @@ int caclulate_next_event_time(struct list_entry *current_entry) {
   entry_tm.tm_mday = current_entry->date.day;
   entry_tm.tm_hour = current_entry->time.hour;
   entry_tm.tm_min = current_entry->time.minute;
-  entry_tm.tm_sec = 1;
+  entry_tm.tm_sec = 0;
   entry_tm.tm_isdst = -1;
   time_t entry_t = mktime(&entry_tm);
 
-  if (current_entry->is_birthday == 0 && entry_t < t) {
-    entry_t += current_entry->repeat_cycle * 60 * 60 * 24;
+  if (current_entry->is_birthday == 0) {
+    while (entry_t < t) {
+      entry_t += current_entry->repeat_cycle * 60 * 60 * 24;
+    }
     entry_tm = *localtime(&entry_t);
-    // todo set current entry to next date/time ?!
+    // set current entry time to next
+    current_entry->date.year = entry_tm.tm_year + 1900;
+    current_entry->date.month = entry_tm.tm_mon + 1;
+    current_entry->date.day = entry_tm.tm_mday;
+    current_entry->time.hour = entry_tm.tm_hour;
+    current_entry->time.minute = entry_tm.tm_min;
   }
   return entry_t;
 }
@@ -169,6 +175,7 @@ int add_entry(void) {
       list[list_length].time.minute = entry_to_change.time.minute;
       list[list_length].is_birthday = entry_to_change.is_birthday;
       list[list_length].repeat_cycle = entry_to_change.repeat_cycle;
+      list[list_length].next_event_time = calculate_next_event_time(&list[list_length]);
       list[list_length].last_notification_time = -1;
       list_length++;
 
@@ -199,6 +206,8 @@ int del_entry(void) {
         list[i-1].date.day = list[i].date.day;
         list[i-1].date.month = list[i].date.month;
         list[i-1].date.year = list[i].date.year;
+        list[i-1].time.hour = list[i].time.hour;
+        list[i-1].time.minute = list[i].time.minute;
         list[i-1].is_birthday = list[i].is_birthday;
         list[i-1].repeat_cycle = list[i].repeat_cycle;
         list[i-1].next_event_time = list[i].next_event_time;
@@ -212,4 +221,57 @@ int del_entry(void) {
     }
   }
   return 0;
+}
+
+void sort_list(void) {
+  /* sort list by year / month and date for output asc */
+  int i, has_change = 0;
+  struct list_entry tmp_entry;
+
+  for (i = 0; i < list_length - 1; i++) {
+    if (list[i].date.year > list[i+1].date.year ||
+        (list[i].date.year == list[i+1].date.year &&
+         list[i].date.month > list[i+1].date.month) ||
+        (list[i].date.year == list[i+1].date.year &&
+         list[i].date.month == list[i+1].date.month &&
+         list[i].date.day > list[i+1].date.day)
+       ) {
+      has_change = 1;
+
+      strcpy(tmp_entry.text, list[i].text);
+      tmp_entry.date.day = list[i].date.day;
+      tmp_entry.date.month = list[i].date.month;
+      tmp_entry.date.year = list[i].date.year;
+      tmp_entry.time.hour = list[i].time.hour;
+      tmp_entry.time.minute = list[i].time.minute;
+      tmp_entry.is_birthday = list[i].is_birthday;
+      tmp_entry.repeat_cycle = list[i].repeat_cycle;
+      tmp_entry.next_event_time = list[i].next_event_time;
+      tmp_entry.last_notification_time = list[i].last_notification_time;
+
+
+      strcpy(list[i].text, list[i+1].text);
+      list[i].date.day = list[i+1].date.day;
+      list[i].date.month = list[i+1].date.month;
+      list[i].date.year = list[i+1].date.year;
+      list[i].time.hour = list[i+1].time.hour;
+      list[i].time.minute = list[i+1].time.minute;
+      list[i].is_birthday = list[i+1].is_birthday;
+      list[i].repeat_cycle = list[i+1].repeat_cycle;
+      list[i].next_event_time = list[i+1].next_event_time;
+      list[i].last_notification_time = list[i+1].last_notification_time;
+
+      strcpy(list[i+1].text, tmp_entry.text);
+      list[i+1].date.day = tmp_entry.date.day;
+      list[i+1].date.month = tmp_entry.date.month;
+      list[i+1].date.year = tmp_entry.date.year;
+      list[i+1].time.hour = tmp_entry.time.hour;
+      list[i+1].time.minute = tmp_entry.time.minute;
+      list[i+1].is_birthday = tmp_entry.is_birthday;
+      list[i+1].repeat_cycle = tmp_entry.repeat_cycle;
+      list[i+1].next_event_time = tmp_entry.next_event_time;
+      list[i+1].last_notification_time = tmp_entry.last_notification_time;
+    }
+  }
+  if (has_change == 1) sort_list();
 }

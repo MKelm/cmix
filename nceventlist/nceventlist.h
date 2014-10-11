@@ -25,9 +25,10 @@ void get_user_file(void);
 
 void load_list(void);
 
-int caclulate_next_event_time(struct list_entry *current_entry);
-
 void save_list(void);
+void sort_list(void);
 
 int add_entry(void);
 int del_entry(void);
+
+int calculate_next_event_time(struct list_entry *current_entry);
