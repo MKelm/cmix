@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "phrases.h"
 
 struct phrases phrases_data;
@@ -12,9 +13,15 @@ void phrases_set_lang(char *lang) {
 void phrases_load(void) {
   int linenum = 0, run = 1;
   char line[1024], file_location[256];
-  strncpy(file_location, FILE_DIR_PHRASES, sizeof(file_location));
+
+  ssize_t len = readlink("/proc/self/exe", file_location, sizeof(file_location));
+  if (len != -1)
+    file_location[len-3] = '\0';
+
+  strcat(file_location, FILE_DIR_PHRASES);
   strcat(file_location, phrases_lang);
   strcat(file_location, FILE_EXT_PHRASES);
+
   FILE *f = fopen(file_location, "r");
   do {
     if (fscanf(f, "%[^\n]\n", &line[0]) && strlen(line) > 0) {
