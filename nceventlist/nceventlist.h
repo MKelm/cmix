@@ -32,3 +32,6 @@ int add_entry(void);
 int del_entry(void);
 
 int calculate_next_event_time(struct list_entry *current_entry);
+
+void notification_service(int sleep_seconds);
+void send_next_notification(void);

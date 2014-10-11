@@ -21,9 +21,11 @@ char user_file[MAX_FILE_NAME_LENGTH];
 
 int main(int argc, char *argv[]) {
   phrases_load();
-
   get_user_file();
-  printf("%s\n", user_file);
+
+  if (argc > 2 && strcmp(argv[1], "notifications") == 0 && atoi(argv[2]) > 0) {
+    notification_service(atoi(argv[2]));
+  }
 
   load_list();
   sort_list();
@@ -276,4 +278,56 @@ void sort_list(void) {
     }
   }
   if (has_change == 1) sort_list();
+}
+
+void send_next_notification(void) {
+  char message[256], call[256];
+  int i;
+  time_t t = time(NULL);
+  int w2pre, w1pre, d3pre, d1pre;
+
+  for (i = 0; i < list_length; i++) {
+    w2pre = list[i].next_event_time - (2 * 7 * 24 * 60 * 60);
+    w1pre = list[i].next_event_time - (1 * 7 * 24 * 60 * 60);
+    d3pre = list[i].next_event_time - (3 * 24 * 60 * 60);
+    d1pre = list[i].next_event_time - (1 * 24 * 60 * 60);
+
+    if ((t > w2pre && t < w1pre && list[i].last_notification_time < w2pre) ||
+        (t > w1pre && t < d3pre && list[i].last_notification_time < w1pre) ||
+        (t > d3pre && t < d1pre && list[i].last_notification_time < d3pre) ||
+        (t > d1pre && t < list[i].next_event_time && list[i].last_notification_time < d1pre)) {
+
+      list[i].last_notification_time = t;
+
+      snprintf(
+        message,
+        sizeof(message),
+        "%d.%d. %s",
+        list[i].date.day, list[i].date.month, list[i].text
+      );
+      if (list[i].is_birthday == 1)
+        strncat(message, "Birthday", sizeof(message));
+
+      snprintf(
+        call,
+        sizeof(call),
+        "%s \"Event\" \"%s\"",
+        "notify-send -i /usr/share/icons/gnome/48x48/status/appointment-soon.png",
+        message
+      );
+      system(call);
+    }
+  }
+}
+
+void notification_service(int sleep_seconds) {
+  while (1) {
+    load_list();
+    sort_list();
+    send_next_notification();
+    fflush(stdout);
+    save_list();
+    sleep(sleep_seconds);
+  }
+  exit(EXIT_SUCCESS);
 }
