@@ -91,15 +91,15 @@ void display_input_add_event(int is_single) {
   mvwaddstr(wsinput, 4, 0, "+ ");
   waddstr(wsinput, phrases_data.input_date);
   waddstr(wsinput, ":   -  -    ");
+  mvwgetnstr(wsinput, 4, strlen(phrases_data.input_date)+4, day, 2);
+  mvwgetnstr(wsinput, 4, strlen(phrases_data.input_date)+7, month, 2);
+  mvwgetnstr(wsinput, 4, strlen(phrases_data.input_date)+10, year, 4);
 
-  mvwgetnstr(wsinput, 4, 8, day, 2);
-  mvwgetnstr(wsinput, 4, 11, month, 2);
-  mvwgetnstr(wsinput, 4, 14, year, 4);
   mvwaddstr(wsinput, 5, 0, "+ ");
   waddstr(wsinput, phrases_data.input_time);
   waddstr(wsinput, ":   -  ");
-  mvwgetnstr(wsinput, 5, 8, hour, 2);
-  mvwgetnstr(wsinput, 5, 11, minute, 2);
+  mvwgetnstr(wsinput, 5, strlen(phrases_data.input_time)+4, hour, 2);
+  mvwgetnstr(wsinput, 5, strlen(phrases_data.input_time)+7, minute, 2);
 
   if (is_single == 0) {
     mvwaddstr(wsinput, 7, 0, "+ ");
@@ -144,9 +144,9 @@ void display_input_add_birthday_event(void) {
   mvwaddstr(wsinput, 6, 0, "+ ");
   waddstr(wsinput, phrases_data.input_date);
   waddstr(wsinput, ":   -  -    ");
-  mvwgetnstr(wsinput, 6, 8, day, 2);
-  mvwgetnstr(wsinput, 6, 11, month, 2);
-  mvwgetnstr(wsinput, 6, 14, year, 4);
+  mvwgetnstr(wsinput, 6, strlen(phrases_data.input_date)+4, day, 2);
+  mvwgetnstr(wsinput, 6, strlen(phrases_data.input_date)+7, month, 2);
+  mvwgetnstr(wsinput, 6, strlen(phrases_data.input_date)+10, year, 4);
 
   if (strlen(first_name) > 0 && strlen(last_name) > 0 &&
       strlen(day) > 0 && strlen(month) > 0 && strlen(year) > 0) {
