@@ -22,12 +22,12 @@ char user_file[MAX_FILE_NAME_LENGTH];
 int main(int argc, char *argv[]) {
 
   char lang[128] = "en-US";
-  int i, notify = 0;
+  int i, notify_time_cycle = 0;
 
   if (argc > 2) {
     for (i = 1; i < argc; i++) {
       if (strcmp(argv[i], "-notify") == 0 && atoi(argv[i+1]) > 0) {
-        notify = 1;
+        notify_time_cycle = atoi(argv[i+1]);
       }
       if (strcmp(argv[i], "-lang") == 0 && strlen(argv[i+1]) > 0) {
         strncpy(lang, argv[i+1], sizeof(lang));
@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
   phrases_load();
   get_user_file();
 
-  if (notify == 1) {
-    notification_service(atoi(argv[2]));
+  if (notify_time_cycle > 0) {
+    notification_service(notify_time_cycle);
   }
 
   load_list();
@@ -102,20 +102,17 @@ void load_list(void) {
       exit(EXIT_FAILURE);
     }
   }
-
   int i = 0;
-  while (1) {
-    fscanf(fp, "%hd %hd %hd %hd %hd {%[^}]} %hd %hd %d\n",
+  while (!feof(fp)) {
+    fscanf(fp, "%hd %hd %hd %hd %hd {%[^}^\n]} %hd %hd %d\n",
       &list[i].date.day, &list[i].date.month, &list[i].date.year,
       &list[i].time.hour, &list[i].time.minute,
       list[i].text, &list[i].is_birthday, &list[i].repeat_cycle,
       &list[i].last_notification_time
     );
-    list[i].next_event_time = calculate_next_event_time(&list[i]);
-    if (feof(fp)) {
-      if (strlen(list[i].text) > 0)
-        list_length = i+1;
-      break;
+    if (strlen(list[i].text) > 0) {
+      list[i].next_event_time = calculate_next_event_time(&list[i]);
+      list_length++;
     }
     i++;
   }
