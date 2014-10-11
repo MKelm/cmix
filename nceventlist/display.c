@@ -10,9 +10,11 @@
 
 extern struct phrases phrases_data;
 
-extern struct list_entry entry_to_change;
 extern struct list_entry list[MAX_LIST_ENTRIES];
 extern int list_length;
+
+extern struct list_entry entry_to_change;
+extern int entry_idx_to_delete;
 
 int maxy, maxx, halfy, halfx;
 WINDOW *winput, *whelp, *wlist;
@@ -144,7 +146,9 @@ void display_input_add_birthday_event(void) {
 }
 
 void display_input_del(void) {
-  // todo delelte list entry
+  entry_idx_to_delete = list_offset + list_position;
+  if (list_length == 1)
+    current_context = 0;
 }
 
 void display_help(int textid) {
@@ -317,10 +321,15 @@ int display_input(void) {
       return -1;
       break;
     case KEY_DL:
+    case KEY_DC:
       if (current_context == 1) {
         // delete entry
         display_input_del();
-        display_list();
+        if (current_context == 0) {
+          display_help(0);
+          display_menu();
+        }
+        //display_list();
         return -5;
       }
     case '\n':

@@ -11,9 +11,11 @@
 
 extern struct phrases phrases_data;
 
-struct list_entry entry_to_change;
 struct list_entry list[MAX_LIST_ENTRIES];
 int list_length = 0;
+
+struct list_entry entry_to_change;
+int entry_idx_to_delete = -1;
 
 char user_file[MAX_FILE_NAME_LENGTH];
 
@@ -44,7 +46,7 @@ int main(int argc, char *argv[]) {
         data_changed = add_entry();
         break;
       case -5:
-        // delete entry todo
+        data_changed = del_entry();
         break;
     }
 
@@ -83,7 +85,7 @@ void load_list(void) {
 
   int i = 0;
   while (1) {
-    fscanf(fp, "%hd %hd %hd %hd %hd {%[^}]} %hd %hd %d",
+    fscanf(fp, "%hd %hd %hd %hd %hd {%[^}]} %hd %hd %d\n",
       &list[i].date.day, &list[i].date.month, &list[i].date.year,
       &list[i].time.hour, &list[i].time.minute,
       list[i].text, &list[i].is_birthday, &list[i].repeat_cycle,
@@ -140,7 +142,7 @@ void save_list(void) {
   }
   int i = 0;
   while (i < list_length) {
-    fprintf(fp, "%hd %hd %hd %hd %hd {%s} %hd %hd %d",
+    fprintf(fp, "%hd %hd %hd %hd %hd {%s} %hd %hd %d\n",
       list[i].date.day, list[i].date.month, list[i].date.year,
       list[i].time.hour, list[i].time.minute,
       list[i].text, list[i].is_birthday, list[i].repeat_cycle,
@@ -179,6 +181,33 @@ int add_entry(void) {
       entry_to_change.is_birthday = 0;
       entry_to_change.repeat_cycle = 0;
 
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int del_entry(void) {
+  if (entry_idx_to_delete > -1) {
+    int i, is_deleted = 0;
+    for (i = 0; i < list_length; i++) {
+
+      if (i == entry_idx_to_delete) {
+        is_deleted = 1;
+      } else if (is_deleted == 1) {
+        strcpy(list[i-1].text, list[i].text);
+        list[i-1].date.day = list[i].date.day;
+        list[i-1].date.month = list[i].date.month;
+        list[i-1].date.year = list[i].date.year;
+        list[i-1].is_birthday = list[i].is_birthday;
+        list[i-1].repeat_cycle = list[i].repeat_cycle;
+        list[i-1].next_event_time = list[i].next_event_time;
+        list[i-1].last_notification_time = list[i].last_notification_time;
+      }
+    }
+    if (is_deleted == 1) {
+      list_length--;
+      entry_idx_to_delete = -1;
       return 1;
     }
   }

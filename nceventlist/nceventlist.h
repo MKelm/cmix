@@ -30,3 +30,4 @@ int caclulate_next_event_time(struct list_entry current_entry);
 void save_list(void);
 
 int add_entry(void);
+int del_entry(void);
