@@ -50,6 +50,48 @@ void phrases_load(void) {
         case 12:
           strncpy(phrases_data.help_birthday_event, line, sizeof(phrases_data.help_birthday_event));
           break;
+        case 13:
+          strncpy(phrases_data.entry_birthday, line, sizeof(phrases_data.entry_birthday));
+          break;
+        case 14:
+          strncpy(phrases_data.entry_repeat, line, sizeof(phrases_data.entry_repeat));
+          break;
+        case 15:
+          strncpy(phrases_data.input_single_event, line, sizeof(phrases_data.input_single_event));
+          break;
+        case 16:
+          strncpy(phrases_data.input_repeating_event, line, sizeof(phrases_data.input_repeating_event));
+          break;
+        case 17:
+          strncpy(phrases_data.input_birthday_event, line, sizeof(phrases_data.input_birthday_event));
+          break;
+        case 18:
+          strncpy(phrases_data.input_text, line, sizeof(phrases_data.input_text));
+          break;
+        case 19:
+          strncpy(phrases_data.input_date, line, sizeof(phrases_data.input_date));
+          break;
+        case 20:
+          strncpy(phrases_data.input_time, line, sizeof(phrases_data.input_time));
+          break;
+        case 21:
+          strncpy(phrases_data.input_repeat_cycle, line, sizeof(phrases_data.input_repeat_cycle));
+          break;
+        case 22:
+          strncpy(phrases_data.input_first_name, line, sizeof(phrases_data.input_first_name));
+          break;
+        case 23:
+          strncpy(phrases_data.input_last_name, line, sizeof(phrases_data.input_last_name));
+          break;
+        case 24:
+          strncpy(phrases_data.message_event, line, sizeof(phrases_data.message_event));
+          break;
+        case 25:
+          strncpy(phrases_data.message_error_fread, line, sizeof(phrases_data.message_error_fread));
+          break;
+        case 26:
+          strncpy(phrases_data.message_error_fwrite, line, sizeof(phrases_data.message_error_fwrite));
+          break;
       }
       strncpy(line, "", sizeof(line));
       linenum++;

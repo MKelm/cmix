@@ -74,24 +74,37 @@ void display_input_add_event(int is_single) {
   curs_set(1);
 
   wclear(wsinput);
-  if (is_single == 1)
-    mvwaddstr(wsinput, 0, 0, "* Single event");
-  else
-    mvwaddstr(wsinput, 0, 0, "* Repeating event");
-  mvwaddstr(wsinput, 2, 0, "+ Text: ");
+  if (is_single == 1) {
+    mvwaddstr(wsinput, 0, 0, "* ");
+    waddstr(wsinput, phrases_data.input_single_event);
+
+  } else {
+    mvwaddstr(wsinput, 0, 0, "* ");
+    waddstr(wsinput, phrases_data.input_repeating_event);
+  }
+  mvwaddstr(wsinput, 2, 0, "+ ");
+  waddstr(wsinput, phrases_data.input_text);
+  waddstr(wsinput, ": ");
   wrefresh(wsinput);
   wgetnstr(wsinput, text, PHRASES_CHARS_LENGTH-1);
 
-  mvwaddstr(wsinput, 4, 0, "+ Date:   -  -    ");
+  mvwaddstr(wsinput, 4, 0, "+ ");
+  waddstr(wsinput, phrases_data.input_date);
+  waddstr(wsinput, ":   -  -    ");
+
   mvwgetnstr(wsinput, 4, 8, day, 2);
   mvwgetnstr(wsinput, 4, 11, month, 2);
   mvwgetnstr(wsinput, 4, 14, year, 4);
-  mvwaddstr(wsinput, 5, 0, "+ Time:   -  ");
+  mvwaddstr(wsinput, 5, 0, "+ ");
+  waddstr(wsinput, phrases_data.input_time);
+  waddstr(wsinput, ":   -  ");
   mvwgetnstr(wsinput, 5, 8, hour, 2);
   mvwgetnstr(wsinput, 5, 11, minute, 2);
 
   if (is_single == 0) {
-    mvwaddstr(wsinput, 7, 0, "+ Repeat cycle: ");
+    mvwaddstr(wsinput, 7, 0, "+ ");
+    waddstr(wsinput, phrases_data.input_repeat_cycle);
+    waddstr(wsinput, ": ");
     wgetnstr(wsinput, repeat_cycle, 4);
   }
 
@@ -115,15 +128,22 @@ void display_input_add_birthday_event(void) {
   curs_set(1);
 
   wclear(wsinput);
-  mvwaddstr(wsinput, 0, 0, "* Birthday event");
-  mvwaddstr(wsinput, 2, 0, "+ First name: ");
+  mvwaddstr(wsinput, 0, 0, "* ");
+  waddstr(wsinput, phrases_data.input_birthday_event);
+  mvwaddstr(wsinput, 2, 0, "+ ");
+  waddstr(wsinput, phrases_data.input_first_name);
+  waddstr(wsinput, ": ");
   wrefresh(wsinput);
   wgetnstr(wsinput, first_name, 127);
-  mvwaddstr(wsinput, 4, 0, "+ Last name: ");
+  mvwaddstr(wsinput, 4, 0, "+ ");
+  waddstr(wsinput, phrases_data.input_last_name);
+  waddstr(wsinput, ": ");
   wrefresh(wsinput);
   wgetnstr(wsinput, last_name, 127);
 
-  mvwaddstr(wsinput, 6, 0, "+ Date:   -  -    ");
+  mvwaddstr(wsinput, 6, 0, "+ ");
+  waddstr(wsinput, phrases_data.input_date);
+  waddstr(wsinput, ":   -  -    ");
   mvwgetnstr(wsinput, 6, 8, day, 2);
   mvwgetnstr(wsinput, 6, 11, month, 2);
   mvwgetnstr(wsinput, 6, 14, year, 4);
@@ -219,7 +239,9 @@ void display_list(void) {
       text, sizeof(text),
       "* %d.%d.%d: %s %s",
       list[c].date.day, list[c].date.month, list[c].date.year, list[c].text,
-      ((list[c].is_birthday == 1) ? "Birthday" : (list[c].repeat_cycle > 0) ? "(R)" : "")
+      ((list[c].is_birthday == 1) ?
+        phrases_data.entry_birthday : (list[c].repeat_cycle > 0) ?
+          phrases_data.entry_repeat : "")
     );
     // todo time output
     mvwaddstr(wslist, 1 + ((c - list_offset) * 2), 1, text);

@@ -81,7 +81,7 @@ void load_list(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "r")) == NULL) {
     if ((fp = fopen(user_file, "w+")) == NULL) {
-      fprintf(stderr, "Error while loading data file.\n");
+      fprintf(stderr, "%s\n", phrases_data.message_error_fread);
       exit(EXIT_FAILURE);
     }
   }
@@ -148,7 +148,7 @@ int calculate_next_event_time(struct list_entry *current_entry) {
 void save_list(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "w+")) == NULL) {
-    fprintf(stderr, "Error while saving data file.\n");
+    fprintf(stderr, "%s.\n", phrases_data.message_error_fwrite);
     exit(EXIT_FAILURE);
   }
   int i = 0;
@@ -306,13 +306,14 @@ void send_next_notification(void) {
         list[i].date.day, list[i].date.month, list[i].text
       );
       if (list[i].is_birthday == 1)
-        strncat(message, "Birthday", sizeof(message));
+        strncat(message, phrases_data.entry_birthday, sizeof(message));
 
       snprintf(
         call,
         sizeof(call),
-        "%s \"Event\" \"%s\"",
+        "%s \"%s\" \"%s\"",
         "notify-send -i /usr/share/icons/gnome/48x48/status/appointment-soon.png",
+        phrases_data.message_event,
         message
       );
       system(call);

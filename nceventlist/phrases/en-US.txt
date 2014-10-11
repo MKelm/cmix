@@ -11,3 +11,17 @@ Navigate with your arrow keys up/down. Delete entry by pressing delete. Switch t
 Add a single event with a fixed date and time. Set a meaningful description text. Confirm by pressing enter.
 Add a repeating event with a start date / time, and a repeat cycle in days. Set a meaningful description text. Confirm by pressing enter.
 Add a birthday date. Confirm by pressing enter.
+(B-Day)
+(R-Cycle)
+Single event
+Repeating event
+Birthday event
+Text
+Date
+Time
+Repeat cycle
+First name
+Last name
+Event
+Error while loading data file.
+Error while saving data file.
