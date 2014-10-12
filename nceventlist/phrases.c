@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "phrases.h"
@@ -22,7 +23,11 @@ void phrases_load(void) {
   strcat(file_location, phrases_lang);
   strcat(file_location, FILE_EXT_PHRASES);
 
-  FILE *f = fopen(file_location, "r");
+  FILE *f;
+  if ((f = fopen(file_location, "r")) == NULL) {
+    fprintf(stderr, "%s\n", "Error while loading phrases data.");
+    exit(EXIT_FAILURE);
+  }
   do {
     if (fscanf(f, "%[^\n]\n", &line[0]) && strlen(line) > 0) {
       switch (linenum) {
