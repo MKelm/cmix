@@ -1,6 +1,5 @@
 #include <unistd.h>
 #include <curses.h>
-#include <sys/time.h>
 #include <pthread.h>
 
 int max_round_seconds = 25;
