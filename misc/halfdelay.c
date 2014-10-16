@@ -1,5 +1,7 @@
+#include <unistd.h>
 #include <curses.h>
 #include <sys/time.h>
+#include <pthread.h>
 
 int max_round_time_seconds = 180;
 double max_round_utime = 0;
@@ -7,7 +9,12 @@ double remaining_round_utime = 0;
 
 double time_diff(struct timeval x , struct timeval y);
 
+void *timer_output();
+
 int main() {
+  pthread_t t_out;
+  pthread_create(&t_out, NULL, &timer_output, NULL);
+
   struct timeval before, after;
 
   max_round_utime = max_round_time_seconds * 1000000;
@@ -37,6 +44,19 @@ int main() {
   printf("Rest round time %.0lf us\n", remaining_round_utime);
 
   return 0;
+}
+
+void *timer_output() {
+  int i, cy, cx;
+  for(i = 1; i < 10; i++) {
+    getyx(stdscr, cy, cx);
+    move(2, i);
+    printw("*");
+    move(cy, cx);
+    refresh();
+    sleep(1);
+  }
+  pthread_exit(NULL);
 }
 
 double time_diff(struct timeval x , struct timeval y) {
