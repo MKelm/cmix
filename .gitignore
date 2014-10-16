@@ -5,6 +5,7 @@
 !*.c
 !*.h
 !*.txt
+!misc
 !chanoi
 !cgblist
 !ncgblist
