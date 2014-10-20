@@ -3,35 +3,37 @@
 #include <stdlib.h>
 #include "jsmn/jsmn.h"
 
-#define MAX_JSON_LINE_CHARS 1024
-
-char tmp_publist[256] = "/tmp/ripdifm_public_list";
-char tmp_playlist[256] = "/tmp/ripdifm_playlist";
-
+#define MAX_CHUNK_CHARS 1024
+#define MAX_FILE_CHARS 256
+#define MAX_KEY_CHARS 256
+#define MAX_URL_CHARS 512
 #define MAX_PLAYLIST_ITEMS 100
 
+char tmp_publist[MAX_FILE_CHARS] = "/tmp/ripdifm_public_list";
+char tmp_playlist[MAX_FILE_CHARS] = "/tmp/ripdifm_playlist";
+
 struct playlist_item {
-  char key[256];
-  char playlist[512];
+  char key[MAX_KEY_CHARS];
+  char playlist_url[MAX_URL_CHARS];
 } playlist_items[MAX_PLAYLIST_ITEMS];
 
 int playlist_items_count = 0;
 
-char stream_url[256];
+char publist_url[MAX_URL_CHARS] = "http://listen.di.fm/public1";
+char stream_url[MAX_URL_CHARS];
 
 void load_json_token(char* input, char *token, jsmntok_t *tokens, int token_idx) {
-  strncpy(token, "", MAX_JSON_LINE_CHARS);
+  strncpy(token, "", MAX_CHUNK_CHARS);
   strncpy(token, input + tokens[token_idx].start,
     tokens[token_idx].end - tokens[token_idx].start);
 }
 
 void curl_public_list(void) {
-  char call[1024];
+  char call[MAX_CHUNK_CHARS];
   snprintf(
     call, sizeof(call),
     "curl %s -o %s",
-    "http://listen.di.fm/public3",
-    tmp_publist
+    publist_url, tmp_publist
   );
   system(call);
 }
@@ -39,7 +41,7 @@ void curl_public_list(void) {
 void set_public_list_by_tokens(char *output, jsmntok_t *tokens) {
   int i = 0, j, j_max, k, k_max;
   playlist_items_count = 0;
-  char line[MAX_JSON_LINE_CHARS];
+  char line[MAX_CHUNK_CHARS];
   if (tokens[i].type == JSMN_ARRAY) {
     // iterate through stream list parts
     j_max = tokens[i].size;
@@ -60,7 +62,7 @@ void set_public_list_by_tokens(char *output, jsmntok_t *tokens) {
               strcpy(playlist_items[playlist_items_count].key, line);
             } else if (strcmp(line, "playlist") == 0) {
               load_json_token(output, line, tokens, i+1);
-              strcpy(playlist_items[playlist_items_count].playlist, line);
+              strcpy(playlist_items[playlist_items_count].playlist_url, line);
               playlist_items_count++;
             }
           }
@@ -100,8 +102,8 @@ void load_public_list(void) {
 void load_playlist(void) {
   FILE *fp = fopen(tmp_playlist, "r");
 
-  char *ptr, chunk[1024];
-  while (fgets(chunk, 1024, fp) != NULL) {
+  char *ptr, chunk[MAX_CHUNK_CHARS];
+  while (fgets(chunk, MAX_CHUNK_CHARS, fp) != NULL) {
     chunk[strlen(chunk)-1] = '\0';
 
     ptr = strtok(chunk, "=");
@@ -119,15 +121,15 @@ void load_playlist(void) {
 
 void curl_playlist(char *pl_key) {
   int i, key_found;
-  char pl_url[512];
+  char pl_url[MAX_URL_CHARS];
   for (i = 0; i < playlist_items_count; i++) {
     if (strcmp(playlist_items[i].key, pl_key) == 0) {
-      strcpy(pl_url, playlist_items[i].playlist);
+      strcpy(pl_url, playlist_items[i].playlist_url);
       key_found = 1;
     }
   }
   if (key_found == 1) {
-    char call[1024];
+    char call[MAX_CHUNK_CHARS];
     snprintf(
       call, sizeof(call),
       "curl %s -o %s",
@@ -141,7 +143,7 @@ void curl_playlist(char *pl_key) {
 }
 
 void start_streamrip(char *dest_directory) {
-  char call[1024];
+  char call[MAX_CHUNK_CHARS];
   snprintf(
     call, sizeof(call),
     "streamripper %s -d %s",
