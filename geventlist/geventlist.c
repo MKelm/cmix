@@ -99,6 +99,7 @@ int main (int argc, char *argv[]) {
 }
 
 static void destroy (GtkWidget *window, gpointer data) {
+  list_save();
   gtk_main_quit();
 }
 
@@ -210,7 +211,7 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
     strcpy(temp_item.text, text);
     temp_item.cycle = rcycle;
 
-    i = set_gtk_list_item(temp_item);
+    i = set_gtk_list_item(&temp_item);
     if (i > -1) {
       model = gtk_tree_view_get_model(treeview);
       gtk_list_store_insert(GTK_LIST_STORE(model), &iter, i);

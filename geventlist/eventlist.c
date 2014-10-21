@@ -75,17 +75,17 @@ int list_find_next_idx(st_list_entry *current_entry) {
   return -1;
 }
 
-int set_gtk_list_item(st_gtk_list_item gtk_list_item) {
+int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
 
   if (list_length + 1 < MAX_LIST_ENTRIES) {
 
-    list[list_length].is_birthday = (strcmp(gtk_list_item.type, "Birthday") == 0)
+    list[list_length].is_birthday = (strcmp(gtk_list_item->type, "Birthday") == 0)
       ? 1 : 0;
-    list[list_length].repeat_cycle = gtk_list_item.cycle;
-    strcpy(list[list_length].text, gtk_list_item.text);
+    list[list_length].repeat_cycle = gtk_list_item->cycle;
+    strcpy(list[list_length].text, gtk_list_item->text);
 
     char *ptr;
-    ptr = strtok(gtk_list_item.date, ".");
+    ptr = strtok(gtk_list_item->date, ".");
     int i = 0;
     while (ptr != NULL) {
       switch (i) {
@@ -102,10 +102,8 @@ int set_gtk_list_item(st_gtk_list_item gtk_list_item) {
       ptr = strtok(NULL, ".");
       i++;
     }
-    g_message("new date %d.%d.%d",  list[list_length].date.day,  list[list_length].date.month,
-     list[list_length].date.year);
 
-    ptr = strtok(gtk_list_item.time, ":");
+    ptr = strtok(gtk_list_item->time, ":");
     i = 0;
     while (ptr != NULL) {
       switch (i) {
@@ -119,16 +117,24 @@ int set_gtk_list_item(st_gtk_list_item gtk_list_item) {
       ptr = strtok(NULL, ".");
       i++;
     }
-    g_message("new time %d:%d",  list[list_length].time.hour,  list[list_length].time.minute);
 
     list[list_length].next_event_time = calculate_next_event_time(&list[list_length]);
+    // set next event time to gtk item
+    g_snprintf(gtk_list_item->date, 256, "%s%d.%s%d.%d",
+      (list[list_length].date.day < 10) ? "0" : "", list[list_length].date.day,
+      (list[list_length].date.month < 10) ? "0" : "", list[list_length].date.month,
+      list[list_length].date.year);
+
+    g_snprintf(gtk_list_item->time, 256, "%s%d:%s%d",
+      (list[list_length].time.hour < 10) ? "0" : "", list[list_length].time.hour,
+       (list[list_length].time.minute < 10) ? "0" : "", list[list_length].time.minute);
+
     list[list_length].last_notification_time = -1;
     list_length++;
 
     i = list_find_next_idx(&list[list_length-1]);
     list_sort();
 
-    g_message("new position %d", i);
     if (i > -1)
       return i;
   }
