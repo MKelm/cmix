@@ -39,8 +39,9 @@ st_gtk_list_item get_gtk_list_item(int i) {
     (list[i].date.month < 10) ? "0" : "", list[i].date.month,
     list[i].date.year);
 
-  g_snprintf(gtk_list_item.time, 256, "%d:%d",
-    list[i].time.hour, list[i].time.minute);
+  g_snprintf(gtk_list_item.time, 256, "%s%d:%s%d",
+    (list[i].time.hour < 10) ? "0" : "", list[i].time.hour,
+     (list[i].time.minute < 10) ? "0" : "", list[i].time.minute);
 
   g_snprintf(gtk_list_item.text, 256, "%s", list[i].text);
 
