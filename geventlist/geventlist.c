@@ -154,6 +154,7 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
   GtkTreeModel *model;
 
   const gchar *date, *time, *text;
+  gchar *selected_date, *selected_time;
   gint type, rcycle;
 
   dialog = gtk_dialog_new_with_buttons(
@@ -221,8 +222,26 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
       return;
     }
 
-    model = gtk_tree_view_get_model (treeview);
-    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    model = gtk_tree_view_get_model(treeview);
+    gtk_tree_model_get_iter_from_string(model, &iter, "0");
+
+    int i = 0;
+    do {
+      gtk_tree_model_get(model, &iter, DATE, &selected_date, TIME, &selected_time, -1);
+      i++;
+      if (g_ascii_strcasecmp(selected_date, date) == 0) {
+        // todo get correct insert position by seperate event list
+        g_message("Found date!");
+        g_free(selected_date);
+        g_free(selected_time);
+        break;
+      }
+
+      g_free(selected_date);
+      g_free(selected_time);
+    } while (gtk_tree_model_iter_next(model, &iter));
+
+    gtk_list_store_insert(GTK_LIST_STORE(model), &iter, i);
 
     gchar type_str[256];
     switch (type) {
@@ -236,7 +255,6 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
         strcpy(type_str, "Birthday");
         break;
     }
-
     gtk_list_store_set(GTK_LIST_STORE(model), &iter,
       TYPE, type_str, DATE, date, TIME, time, TEXT, text, CYCLE, rcycle, -1
     );
