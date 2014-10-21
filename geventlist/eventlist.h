@@ -17,6 +17,7 @@ typedef struct {
   char text[MAX_LIST_ENTRY_TEXT_LENGTH];
   short is_birthday;
   short repeat_cycle; // in days
+  int next_event_time;
   int last_notification_time;
 } st_list_entry;
 
@@ -32,4 +33,7 @@ st_gtk_list_item get_gtk_list_item(int i);
 
 void list_get_file(void);
 void list_load(void);
+
+int calculate_next_event_time(st_list_entry *current_entry);
+
 void list_save(void);
