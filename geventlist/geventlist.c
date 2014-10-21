@@ -161,13 +161,13 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
     GTK_STOCK_ADD, GTK_RESPONSE_OK,
     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 
-  check_birthday = gtk_check_button_new_with_mnemonic("Is birthday");
+  check_birthday = gtk_check_button_new_with_mnemonic("is birthday");
   entry_date = gtk_entry_new();
   entry_time = gtk_entry_new();
   entry_text = gtk_entry_new();
   spin_rcycle = gtk_spin_button_new_with_range(0, 365, 1);
 
-  table = gtk_table_new(4, 2, FALSE);
+  table = gtk_table_new(5, 2, FALSE);
   gtk_table_set_row_spacings(GTK_TABLE(table), 5);
   gtk_table_set_col_spacings(GTK_TABLE(table), 5);
   gtk_container_set_border_width(GTK_CONTAINER(table), 5);
@@ -179,11 +179,13 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(table), entry_date, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL,
                    GTK_SHRINK | GTK_FILL, 0, 0);
+  gtk_entry_set_text(GTK_ENTRY(entry_date), "DD.MM.YYYY");
 
   gtk_table_attach(GTK_TABLE(table), gtk_label_new("Time:"), 0, 1, 2, 3,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(table), entry_time, 1, 2, 2, 3, GTK_EXPAND | GTK_FILL,
                    GTK_SHRINK | GTK_FILL, 0, 0);
+  gtk_entry_set_text(GTK_ENTRY(entry_time), "00:00");
 
   gtk_table_attach(GTK_TABLE(table), gtk_label_new("Text:"), 0, 1, 3, 4,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
@@ -212,8 +214,8 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
       type = 0;
     }
 
-    if (g_ascii_strcasecmp(date, "") == 0 || g_ascii_strcasecmp(time, "") == 0 ||
-        g_ascii_strcasecmp(text, "") == 0) {
+    if (g_ascii_strcasecmp(date, "") == 0 || g_ascii_strcasecmp(date, "DD.MM.YYYY") == 0 ||
+        g_ascii_strcasecmp(time, "") == 0 || g_ascii_strcasecmp(text, "") == 0) {
       g_warning ("All of the fields were not correctly filled out!");
       gtk_widget_destroy (dialog);
       return;
