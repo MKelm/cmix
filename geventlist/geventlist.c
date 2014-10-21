@@ -31,7 +31,6 @@ int main (int argc, char *argv[]) {
   GtkListStore *store;
   GtkTreeIter iter;
   GtkTreeSelection *selection;
-  guint i = 0;
 
   gtk_init(&argc, &argv);
 
@@ -48,28 +47,14 @@ int main (int argc, char *argv[]) {
 
   store = gtk_list_store_new(COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 
+  guint i = 0;
   while (i < list_length) {
+    st_gtk_list_item temp = get_gtk_list_item(i);
+
     gtk_list_store_append(store, &iter);
-
-    gchar type_str[256];
-    if (list[i].is_birthday == 1) {
-      strcpy(type_str, "Birthday");
-    } else if (list[i].repeat_cycle > 0) {
-      strcpy(type_str, "Repeating");
-    } else {
-      strcpy(type_str, "Single");
-    }
-
-    gchar date_str[256];
-    g_snprintf(date_str, 256, "%d.%d.%d",
-      list[i].date.day, list[i].date.month, list[i].date.year);
-
-    gchar time_str[256];
-    g_snprintf(time_str, 256, "%d:%d", list[i].time.hour, list[i].time.minute);
-
     gtk_list_store_set(store, &iter,
-      TYPE, type_str, DATE, date_str, TIME, time_str,
-      TEXT, (gchar*)list[i].text, CYCLE, (gint)list[i].repeat_cycle,
+      TYPE, temp.type, DATE, temp.date, TIME, temp.time,
+      TEXT, temp.text, CYCLE, temp.cycle,
       -1
     );
     i++;

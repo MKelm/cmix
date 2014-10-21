@@ -21,6 +21,34 @@ void list_get_file(void) {
   );
 }
 
+st_gtk_list_item get_gtk_list_item(int i) {
+  static st_gtk_list_item gtk_list_item;
+
+  gchar type_str[256];
+  if (list[i].is_birthday == 1) {
+    strcpy(type_str, "Birthday");
+  } else if (list[i].repeat_cycle > 0) {
+    strcpy(type_str, "Repeating");
+  } else {
+    strcpy(type_str, "Single");
+  }
+  g_snprintf(gtk_list_item.type, 256, "%s", type_str);
+
+  g_snprintf(gtk_list_item.date, 256, "%s%d.%s%d.%d",
+    (list[i].date.day < 10) ? "0" : "", list[i].date.day,
+    (list[i].date.month < 10) ? "0" : "", list[i].date.month,
+    list[i].date.year);
+
+  g_snprintf(gtk_list_item.time, 256, "%d:%d",
+    list[i].time.hour, list[i].time.minute);
+
+  g_snprintf(gtk_list_item.text, 256, "%s", list[i].text);
+
+  gtk_list_item.cycle = list[i].repeat_cycle;
+
+  return gtk_list_item;
+}
+
 void list_load(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "r")) == NULL) {

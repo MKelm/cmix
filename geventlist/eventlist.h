@@ -20,6 +20,16 @@ typedef struct {
   int last_notification_time;
 } st_list_entry;
 
+typedef struct {
+  gchar type[256];
+  gchar date[256];
+  gchar time[256];
+  gchar text[256];
+  gint cycle;
+} st_gtk_list_item;
+
+st_gtk_list_item get_gtk_list_item(int i);
+
 void list_get_file(void);
 void list_load(void);
 void list_save(void);
