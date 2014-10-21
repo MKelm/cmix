@@ -1,9 +1,65 @@
 #include <gtk/gtk.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <string.h>
 #include "eventlist.h"
 
-const EventListItem list[] = {
-  { 2, "6.7.2014", "00:00", "Birthday 1", 0 },
-  { 0, "8.11.2014", "00:00", "Single 1", 0 },
-  { 1, "12.12.2014", "00:00", "Repeating 1", 7 },
-  { -1, "", "", "", 0 }
-};
+st_list_entry list[MAX_LIST_ENTRIES];
+int list_length = 0;
+
+char user_file[MAX_FILE_NAME_LENGTH];
+
+void list_get_file(void) {
+  char user_dir[MAX_FILE_NAME_LENGTH];
+  snprintf(
+    user_dir, MAX_FILE_NAME_LENGTH, "%s/%s", getenv("HOME"), ".nceventlist"
+  );
+  mkdir(user_dir, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  snprintf(
+    user_file, MAX_FILE_NAME_LENGTH, "%s/%s", user_dir, "data.txt"
+  );
+}
+
+void list_load(void) {
+  FILE *fp;
+  if ((fp = fopen(user_file, "r")) == NULL) {
+    if ((fp = fopen(user_file, "w+")) == NULL) {
+      fprintf(stderr, "%s\n", "Error read user file.");
+      exit(EXIT_FAILURE);
+    }
+  }
+  int i = 0;
+  while (!feof(fp)) {
+    fscanf(fp, "%hd %hd %hd %hd %hd {%[^}^\n]} %hd %hd %d\n",
+      &list[i].date.day, &list[i].date.month, &list[i].date.year,
+      &list[i].time.hour, &list[i].time.minute,
+      list[i].text, &list[i].is_birthday, &list[i].repeat_cycle,
+      &list[i].last_notification_time
+    );
+    if (strlen(list[i].text) > 0) {
+      list_length++;
+    }
+    i++;
+  }
+  fclose(fp);
+}
+
+void list_save(void) {
+  FILE *fp;
+  if ((fp = fopen(user_file, "w+")) == NULL) {
+    fprintf(stderr, "%s.\n", "Error write user file.");
+    exit(EXIT_FAILURE);
+  }
+  int i = 0;
+  while (i < list_length) {
+    fprintf(fp, "%hd %hd %hd %hd %hd {%s} %hd %hd %d\n",
+      list[i].date.day, list[i].date.month, list[i].date.year,
+      list[i].time.hour, list[i].time.minute,
+      list[i].text, list[i].is_birthday, list[i].repeat_cycle,
+      list[i].last_notification_time
+    );
+    i++;
+  }
+  fclose(fp);
+}

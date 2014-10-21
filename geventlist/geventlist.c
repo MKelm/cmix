@@ -2,7 +2,8 @@
 #include <string.h>
 #include "eventlist.h"
 
-extern const EventListItem list[];
+extern st_list_entry list[MAX_LIST_ENTRIES];
+extern int list_length;
 
 enum {
   TYPE,
@@ -22,6 +23,8 @@ static void add_event(GtkButton*, GtkTreeView*);
 static void remove_events(GtkButton*, GtkTreeView*);
 
 int main (int argc, char *argv[]) {
+  list_get_file();
+  list_load();
 
   GtkWidget *window, *vbox, *treeview, *scrolled_win;
   GtkWidget *hbox_buttons, *button_add, *button_remove;
@@ -45,24 +48,28 @@ int main (int argc, char *argv[]) {
 
   store = gtk_list_store_new(COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INT);
 
-  while (list[i].type != -1) {
+  while (i < list_length) {
     gtk_list_store_append(store, &iter);
 
     gchar type_str[256];
-    switch (list[i].type) {
-      case 0:
-        strcpy(type_str, "Single");
-        break;
-      case 1:
-        strcpy(type_str, "Repeating");
-        break;
-      case 2:
-        strcpy(type_str, "Birthday");
-        break;
+    if (list[i].is_birthday == 1) {
+      strcpy(type_str, "Birthday");
+    } else if (list[i].repeat_cycle > 0) {
+      strcpy(type_str, "Repeating");
+    } else {
+      strcpy(type_str, "Single");
     }
 
+    gchar date_str[256];
+    g_snprintf(date_str, 256, "%d.%d.%d",
+      list[i].date.day, list[i].date.month, list[i].date.year);
+
+    gchar time_str[256];
+    g_snprintf(time_str, 256, "%d:%d", list[i].time.hour, list[i].time.minute);
+
     gtk_list_store_set(store, &iter,
-      TYPE, type_str, DATE, list[i].date, TIME, list[i].time, TEXT, list[i].text, CYCLE, list[i].cycle,
+      TYPE, type_str, DATE, date_str, TIME, time_str,
+      TEXT, (gchar*)list[i].text, CYCLE, (gint)list[i].repeat_cycle,
       -1
     );
     i++;
