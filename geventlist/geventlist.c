@@ -134,8 +134,7 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
   GtkTreeModel *model;
 
   const gchar *date, *time, *text;
-  gchar *selected_date, *selected_time;
-  gint type, rcycle;
+  gint i, rcycle;
 
   dialog = gtk_dialog_new_with_buttons(
     "Add an event", NULL, GTK_DIALOG_MODAL,
@@ -187,57 +186,42 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
     time = gtk_entry_get_text(GTK_ENTRY(entry_time));
     text = gtk_entry_get_text(GTK_ENTRY(entry_text));
     rcycle = (gint)gtk_spin_button_get_value (GTK_SPIN_BUTTON(spin_rcycle));
+
+    gchar type_str[256];
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_birthday)) == TRUE) {
-      type = 2;
+      strcpy(type_str, "Birthday");
     } else if (rcycle > 0) {
-      type = 1;
+      strcpy(type_str, "Repeating");
     } else {
-      type = 0;
+      strcpy(type_str, "Single");
     }
 
     if (g_ascii_strcasecmp(date, "") == 0 || g_ascii_strcasecmp(date, "DD.MM.YYYY") == 0 ||
         g_ascii_strcasecmp(time, "") == 0 || g_ascii_strcasecmp(text, "") == 0) {
-      g_warning ("All of the fields were not correctly filled out!");
-      gtk_widget_destroy (dialog);
+      g_warning("All of the fields were not correctly filled out!");
+      gtk_widget_destroy(dialog);
       return;
     }
 
-    model = gtk_tree_view_get_model(treeview);
-    gtk_tree_model_get_iter_from_string(model, &iter, "0");
+    st_gtk_list_item temp_item;
+    strcpy(temp_item.type, type_str);
+    strcpy(temp_item.date, date);
+    strcpy(temp_item.time, time);
+    strcpy(temp_item.text, text);
+    temp_item.cycle = rcycle;
 
-    int i = 0;
-    do {
-      gtk_tree_model_get(model, &iter, DATE, &selected_date, TIME, &selected_time, -1);
-      i++;
-      if (g_ascii_strcasecmp(selected_date, date) == 0) {
-        // todo get correct insert position by seperate event list
-        g_message("Found date!");
-        g_free(selected_date);
-        g_free(selected_time);
-        break;
-      }
+    i = set_gtk_list_item(temp_item);
+    if (i > -1) {
+      model = gtk_tree_view_get_model(treeview);
+      gtk_list_store_insert(GTK_LIST_STORE(model), &iter, i);
 
-      g_free(selected_date);
-      g_free(selected_time);
-    } while (gtk_tree_model_iter_next(model, &iter));
-
-    gtk_list_store_insert(GTK_LIST_STORE(model), &iter, i);
-
-    gchar type_str[256];
-    switch (type) {
-      case 0:
-        strcpy(type_str, "Single");
-        break;
-      case 1:
-        strcpy(type_str, "Repeating");
-        break;
-      case 2:
-        strcpy(type_str, "Birthday");
-        break;
+      gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+        TYPE, temp_item.type, DATE, temp_item.date, TIME, temp_item.time,
+        TEXT, temp_item.text, CYCLE, temp_item.cycle, -1
+      );
+    } else {
+      g_warning("Cannot add item to list!");
     }
-    gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-      TYPE, type_str, DATE, date, TIME, time, TEXT, text, CYCLE, rcycle, -1
-    );
   }
 
   gtk_widget_destroy(dialog);

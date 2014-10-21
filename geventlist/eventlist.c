@@ -50,6 +50,92 @@ st_gtk_list_item get_gtk_list_item(int i) {
   return gtk_list_item;
 }
 
+int list_find_next_idx(st_list_entry *current_entry) {
+  int i;
+  for (i = 0; i < list_length - 1; i++) {
+    if (current_entry->date.year < list[i].date.year || // greater year
+        (current_entry->date.year == list[i].date.year && // greater month
+         current_entry->date.month < list[i].date.month) ||
+        (current_entry->date.year == list[i].date.year && // greater day
+         current_entry->date.month == list[i].date.month &&
+         current_entry->date.day < list[i].date.day) |
+        (current_entry->date.year == list[i].date.year && // greater hour
+         current_entry->date.month == list[i].date.month &&
+         current_entry->date.day == list[i].date.day &&
+         current_entry->time.hour < list[i].time.hour) ||
+        (current_entry->date.year == list[i].date.year && // greater minute
+         current_entry->date.month == list[i].date.month &&
+         current_entry->date.day == list[i].date.day &&
+         current_entry->time.hour == list[i].time.hour &&
+         current_entry->time.minute < list[i].time.minute)
+       ) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+int set_gtk_list_item(st_gtk_list_item gtk_list_item) {
+
+  if (list_length + 1 < MAX_LIST_ENTRIES) {
+
+    list[list_length].is_birthday = (strcmp(gtk_list_item.type, "Birthday") == 0)
+      ? 1 : 0;
+    list[list_length].repeat_cycle = gtk_list_item.cycle;
+    strcpy(list[list_length].text, gtk_list_item.text);
+
+    char *ptr;
+    ptr = strtok(gtk_list_item.date, ".");
+    int i = 0;
+    while (ptr != NULL) {
+      switch (i) {
+        case 0:
+          list[list_length].date.day = atoi(ptr);
+          break;
+        case 1:
+          list[list_length].date.month = atoi(ptr);
+          break;
+        case 2:
+          list[list_length].date.year = atoi(ptr);
+          break;
+      }
+      ptr = strtok(NULL, ".");
+      i++;
+    }
+    g_message("new date %d.%d.%d",  list[list_length].date.day,  list[list_length].date.month,
+     list[list_length].date.year);
+
+    ptr = strtok(gtk_list_item.time, ":");
+    i = 0;
+    while (ptr != NULL) {
+      switch (i) {
+        case 0:
+          list[list_length].time.hour = atoi(ptr);
+          break;
+        case 1:
+          list[list_length].time.minute = atoi(ptr);
+          break;
+      }
+      ptr = strtok(NULL, ".");
+      i++;
+    }
+    g_message("new time %d:%d",  list[list_length].time.hour,  list[list_length].time.minute);
+
+    list[list_length].next_event_time = calculate_next_event_time(&list[list_length]);
+    list[list_length].last_notification_time = -1;
+    list_length++;
+
+    i = list_find_next_idx(&list[list_length-1]);
+    list_sort();
+
+    g_message("new position %d", i);
+    if (i > -1)
+      return i;
+  }
+
+  return -1;
+}
+
 void list_load(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "r")) == NULL) {
@@ -73,6 +159,8 @@ void list_load(void) {
     i++;
   }
   fclose(fp);
+
+  list_sort();
 }
 
 int calculate_next_event_time(st_list_entry *current_entry) {
@@ -113,6 +201,38 @@ int calculate_next_event_time(st_list_entry *current_entry) {
   current_entry->time.minute = entry_tm.tm_min;
 
   return entry_t;
+}
+
+void list_sort(void) {
+  /* sort list by year / month and date for output asc */
+  int i, has_change = 0;
+  st_list_entry tmp_entry;
+
+  for (i = 0; i < list_length - 1; i++) {
+    if (list[i].date.year > list[i+1].date.year || // greater year
+        (list[i].date.year == list[i+1].date.year && // greater month
+         list[i].date.month > list[i+1].date.month) ||
+        (list[i].date.year == list[i+1].date.year && // greater day
+         list[i].date.month == list[i+1].date.month &&
+         list[i].date.day > list[i+1].date.day) ||
+        (list[i].date.year == list[i+1].date.year && // greater hour
+         list[i].date.month == list[i+1].date.month &&
+         list[i].date.day == list[i+1].date.day &&
+         list[i].time.hour > list[i+1].time.hour) ||
+        (list[i].date.year == list[i+1].date.year && // greater minute
+         list[i].date.month == list[i+1].date.month &&
+         list[i].date.day == list[i+1].date.day &&
+         list[i].time.hour == list[i+1].time.hour &&
+         list[i].time.minute == list[i+1].time.minute)
+       ) {
+      has_change = 1;
+
+      tmp_entry = list[i];
+      list[i] = list[i+1];
+      list[i+1] = tmp_entry;
+    }
+  }
+  if (has_change == 1) list_sort();
 }
 
 void list_save(void) {

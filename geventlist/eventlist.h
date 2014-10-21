@@ -31,9 +31,13 @@ typedef struct {
 
 st_gtk_list_item get_gtk_list_item(int i);
 
+int list_find_next_idx(st_list_entry *current_entry);
+int set_gtk_list_item(st_gtk_list_item gtk_list_item);
+
 void list_get_file(void);
 void list_load(void);
 
 int calculate_next_event_time(st_list_entry *current_entry);
+void list_sort(void);
 
 void list_save(void);
