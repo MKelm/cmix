@@ -229,7 +229,7 @@ void list_sort(void) {
          list[i].date.month == list[i+1].date.month &&
          list[i].date.day == list[i+1].date.day &&
          list[i].time.hour == list[i+1].time.hour &&
-         list[i].time.minute == list[i+1].time.minute)
+         list[i].time.minute > list[i+1].time.minute)
        ) {
       has_change = 1;
 
