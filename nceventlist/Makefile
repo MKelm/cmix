@@ -1,10 +1,11 @@
 # Makefile for nceventlist
+ARCH := $(shell uname -m)
 CC = gcc
 CFLAGS = -Wall -ggdb
 LDFLAGS = -lncursesw -lm
 
 nceventlist : nceventlist.o display.o phrases.o
-	$(CC) nceventlist.o display.o phrases.o -o run $(LDFLAGS)
+	$(CC) nceventlist.o display.o phrases.o -o nceventlist.$(ARCH) $(LDFLAGS)
 
 nceventlist.o : nceventlist.c nceventlist.h display.h phrases.h
 	$(CC) $(CFLAGS) -c nceventlist.c

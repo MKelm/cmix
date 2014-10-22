@@ -1,10 +1,11 @@
 # Makefile for geventlist
+ARCH := $(shell uname -m)
 CC = gcc
 CFLAGS = -Wall -ggdb
 LDFLAGS = `pkg-config --cflags gtk+-2.0` `pkg-config --libs gtk+-2.0`
 
 geventlist : geventlist.o eventlist.o phrases.o
-	$(CC) geventlist.o eventlist.o phrases.o -o geventlist $(LDFLAGS)
+	$(CC) geventlist.o eventlist.o phrases.o -o geventlist.$(ARCH) $(LDFLAGS)
 
 geventlist.o : geventlist.c eventlist.h phrases.h
 	$(CC) $(CFLAGS) -c geventlist.c $(LDFLAGS)
