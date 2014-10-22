@@ -247,7 +247,7 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
         TEXT, temp_item.text, CYCLE, temp_item.cycle, -1
       );
     } else {
-      g_warning("Cannot add item to list, no new position available!");
+      g_warning("Cannot add item to list, error on set item to list!");
     }
   }
 

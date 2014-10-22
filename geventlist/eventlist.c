@@ -86,7 +86,10 @@ int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
       (strcmp(gtk_list_item->type, phrases_data.option_type_birthday) == 0)
       ? 1 : 0;
     list[list_length].repeat_cycle = gtk_list_item->cycle;
+
     strcpy(list[list_length].text, gtk_list_item->text);
+    if (strlen(list[list_length].text) == 0)
+      return -1;
 
     char *ptr;
     ptr = strtok(gtk_list_item->date, ".");
@@ -106,6 +109,8 @@ int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
       ptr = strtok(NULL, ".");
       i++;
     }
+    if (i != 3)
+      return -1;
 
     ptr = strtok(gtk_list_item->time, ":");
     i = 0;
@@ -121,6 +126,8 @@ int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
       ptr = strtok(NULL, ".");
       i++;
     }
+    if (i != 2)
+      return -1;
 
     list[list_length].next_event_time = calculate_next_event_time(&list[list_length]);
     // set next event time to gtk item
