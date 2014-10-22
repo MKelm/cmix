@@ -1,0 +1,11 @@
+Type
+Date
+Time
+Text
+Cycle
+Add event
+is birthday
+DD.MM.YYYY
+Single
+Repeating
+Birthday

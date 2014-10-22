@@ -4,6 +4,9 @@
 #include <sys/stat.h>
 #include <string.h>
 #include "eventlist.h"
+#include "phrases.h"
+
+extern st_phrases phrases_data;
 
 st_list_entry list[MAX_LIST_ENTRIES];
 int list_length = 0;
@@ -26,11 +29,11 @@ st_gtk_list_item get_gtk_list_item(int i) {
 
   gchar type_str[256];
   if (list[i].is_birthday == 1) {
-    strcpy(type_str, "Birthday");
+    strcpy(type_str, phrases_data.option_type_birthday);
   } else if (list[i].repeat_cycle > 0) {
-    strcpy(type_str, "Repeating");
+    strcpy(type_str, phrases_data.option_type_repeating);
   } else {
-    strcpy(type_str, "Single");
+    strcpy(type_str, phrases_data.option_type_single);
   }
   g_snprintf(gtk_list_item.type, 256, "%s", type_str);
 
@@ -79,7 +82,8 @@ int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
 
   if (list_length + 1 < MAX_LIST_ENTRIES) {
 
-    list[list_length].is_birthday = (strcmp(gtk_list_item->type, "Birthday") == 0)
+    list[list_length].is_birthday =
+      (strcmp(gtk_list_item->type, phrases_data.option_type_birthday) == 0)
       ? 1 : 0;
     list[list_length].repeat_cycle = gtk_list_item->cycle;
     strcpy(list[list_length].text, gtk_list_item->text);

@@ -1,6 +1,9 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include "eventlist.h"
+#include "phrases.h"
+
+extern st_phrases phrases_data;
 
 extern st_list_entry list[MAX_LIST_ENTRIES];
 extern int list_length;
@@ -23,6 +26,9 @@ static void add_event(GtkButton*, GtkTreeView*);
 static void remove_events(GtkButton*, GtkTreeView*);
 
 int main (int argc, char *argv[]) {
+  phrases_set_lang("de-DE");
+  phrases_load();
+
   list_get_file();
   list_load();
 
@@ -108,23 +114,33 @@ static void setup_tree_view(GtkWidget *treeview) {
   GtkTreeViewColumn *column;
 
   renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Type", renderer, "text", TYPE, NULL);
+  column = gtk_tree_view_column_new_with_attributes(
+    phrases_data.column_type, renderer, "text", TYPE, NULL
+  );
   gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
   renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Date", renderer, "text", DATE, NULL);
+  column = gtk_tree_view_column_new_with_attributes(
+    phrases_data.column_date, renderer, "text", DATE, NULL
+  );
   gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
   renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Time", renderer, "text", TIME, NULL);
+  column = gtk_tree_view_column_new_with_attributes(
+    phrases_data.column_type, renderer, "text", TIME, NULL
+  );
   gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
   renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Text", renderer, "text", TEXT, NULL);
+  column = gtk_tree_view_column_new_with_attributes(
+    phrases_data.column_text, renderer, "text", TEXT, NULL
+  );
   gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
   renderer = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Cycle", renderer, "text", CYCLE, NULL);
+  column = gtk_tree_view_column_new_with_attributes(
+    phrases_data.column_cycle, renderer, "text", CYCLE, NULL
+  );
   gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 }
 
@@ -135,14 +151,15 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
   GtkTreeModel *model;
 
   const gchar *date, *time, *text;
+  gchar phrase_option_title[PHRASES_CHARS_LENGTH];
   gint i, rcycle;
 
   dialog = gtk_dialog_new_with_buttons(
-    "Add an event", NULL, GTK_DIALOG_MODAL,
+    phrases_data.title_add_event, NULL, GTK_DIALOG_MODAL,
     GTK_STOCK_ADD, GTK_RESPONSE_OK,
     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 
-  check_birthday = gtk_check_button_new_with_mnemonic("is birthday");
+  check_birthday = gtk_check_button_new_with_mnemonic(phrases_data.option_is_birthday);
   entry_date = gtk_entry_new();
   entry_time = gtk_entry_new();
   entry_text = gtk_entry_new();
@@ -156,24 +173,32 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
   gtk_table_attach(GTK_TABLE(table), check_birthday, 1, 2, 0, 1,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
 
-  gtk_table_attach(GTK_TABLE(table), gtk_label_new("Date:"), 0, 1, 1, 2,
+  strcpy(phrase_option_title, phrases_data.column_date);
+  strcat(phrase_option_title, ":");
+  gtk_table_attach(GTK_TABLE(table), gtk_label_new(phrase_option_title), 0, 1, 1, 2,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(table), entry_date, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL,
                    GTK_SHRINK | GTK_FILL, 0, 0);
-  gtk_entry_set_text(GTK_ENTRY(entry_date), "DD.MM.YYYY");
+  gtk_entry_set_text(GTK_ENTRY(entry_date), phrases_data.option_date_text);
 
-  gtk_table_attach(GTK_TABLE(table), gtk_label_new("Time:"), 0, 1, 2, 3,
+  strcpy(phrase_option_title, phrases_data.column_time);
+  strcat(phrase_option_title, ":");
+  gtk_table_attach(GTK_TABLE(table), gtk_label_new(phrase_option_title), 0, 1, 2, 3,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(table), entry_time, 1, 2, 2, 3, GTK_EXPAND | GTK_FILL,
                    GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_entry_set_text(GTK_ENTRY(entry_time), "00:00");
 
-  gtk_table_attach(GTK_TABLE(table), gtk_label_new("Text:"), 0, 1, 3, 4,
+  strcpy(phrase_option_title, phrases_data.column_text);
+  strcat(phrase_option_title, ":");
+  gtk_table_attach(GTK_TABLE(table), gtk_label_new(phrase_option_title), 0, 1, 3, 4,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(table), entry_text, 1, 2, 3, 4, GTK_EXPAND | GTK_FILL,
                    GTK_SHRINK | GTK_FILL, 0, 0);
 
-  gtk_table_attach(GTK_TABLE(table), gtk_label_new("Cylce:"), 0, 1, 4, 5,
+  strcpy(phrase_option_title, phrases_data.column_cycle);
+  strcat(phrase_option_title, ":");
+  gtk_table_attach(GTK_TABLE(table), gtk_label_new(phrase_option_title), 0, 1, 4, 5,
                    GTK_SHRINK | GTK_FILL, GTK_SHRINK | GTK_FILL, 0, 0);
   gtk_table_attach(GTK_TABLE(table), spin_rcycle, 1, 2, 4, 5, GTK_EXPAND | GTK_FILL,
                    GTK_SHRINK | GTK_FILL, 0, 0);
@@ -190,16 +215,17 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
 
     gchar type_str[256];
     if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(check_birthday)) == TRUE) {
-      strcpy(type_str, "Birthday");
+      strcpy(type_str, phrases_data.option_type_birthday);
     } else if (rcycle > 0) {
-      strcpy(type_str, "Repeating");
+      strcpy(type_str, phrases_data.option_type_repeating);
     } else {
-      strcpy(type_str, "Single");
+      strcpy(type_str, phrases_data.option_type_single);
     }
 
-    if (g_ascii_strcasecmp(date, "") == 0 || g_ascii_strcasecmp(date, "DD.MM.YYYY") == 0 ||
+    if (g_ascii_strcasecmp(date, "") == 0 ||
+        g_ascii_strcasecmp(date, phrases_data.option_date_text) == 0 ||
         g_ascii_strcasecmp(time, "") == 0 || g_ascii_strcasecmp(text, "") == 0) {
-      g_warning("All of the fields were not correctly filled out!");
+      g_warning("Cannot add item to list, not enough data given!");
       gtk_widget_destroy(dialog);
       return;
     }
@@ -221,7 +247,7 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
         TEXT, temp_item.text, CYCLE, temp_item.cycle, -1
       );
     } else {
-      g_warning("Cannot add item to list!");
+      g_warning("Cannot add item to list, no new position available!");
     }
   }
 

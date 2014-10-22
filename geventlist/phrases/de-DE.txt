@@ -1,0 +1,11 @@
+Typ
+Datum
+Zeit
+Text
+Zyklus
+Ereignis hinzufügen
+ist Geburtstag
+TT.MM.JJJJ
+Einzel
+Wiederhlg.
+Geburtstag
