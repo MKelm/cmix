@@ -75,7 +75,7 @@ int list_find_next_idx(st_list_entry *current_entry) {
       return i;
     }
   }
-  return -1;
+  return i;
 }
 
 int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
@@ -138,9 +138,7 @@ int set_gtk_list_item(st_gtk_list_item *gtk_list_item) {
 
     i = list_find_next_idx(&list[list_length-1]);
     list_sort();
-
-    if (i > -1)
-      return i;
+    return i;
   }
 
   return -1;

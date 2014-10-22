@@ -127,7 +127,7 @@ static void setup_tree_view(GtkWidget *treeview) {
 
   renderer = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes(
-    phrases_data.column_type, renderer, "text", TIME, NULL
+    phrases_data.column_time, renderer, "text", TIME, NULL
   );
   gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
