@@ -277,15 +277,18 @@ void send_next_notification(void) {
 
       if (list[i].is_birthday == 1) {
         snprintf(
-          message, sizeof(message), "%hd.%hd. %s %s",
-          list[i].date.day, list[i].date.month, list[i].text,
+          message, sizeof(message), "%s%hd.%s%hd. %s %s",
+          (list[i].date.day < 10) ? "0" : "", list[i].date.day,
+          (list[i].date.month < 10) ? "0" : "", list[i].date.month, list[i].text,
           phrases_data.entry_birthday
         );
       } else {
         snprintf(
-          message, sizeof(message), "%hd.%hd. %hd:%hd %s",
-          list[i].date.day, list[i].date.month,
-          list[i].time.hour, list[i].time.minute, list[i].text
+          message, sizeof(message), "%s%hd.%s%hd. %s%hd:%s%hd %s",
+          (list[i].date.day < 10) ? "0" : "", list[i].date.day,
+          (list[i].date.month < 10) ? "0" : "", list[i].date.month,
+          (list[i].time.hour < 10) ? "0" : "", list[i].time.hour,
+          (list[i].time.minute < 10) ? "0" : "", list[i].time.minute, list[i].text
         );
       }
 
