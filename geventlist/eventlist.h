@@ -40,4 +40,6 @@ void list_load(void);
 int calculate_next_event_time(st_list_entry *current_entry);
 void list_sort(void);
 
+int list_delete_entry(int entry_idx);
+
 void list_save(void);

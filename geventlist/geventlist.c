@@ -231,9 +231,14 @@ static void add_event(GtkButton *add, GtkTreeView *treeview) {
 static void remove_row(GtkTreeRowReference *ref, GtkTreeModel *model) {
   GtkTreeIter iter;
   GtkTreePath *path;
+  int *i;
 
-  path = gtk_tree_row_reference_get_path (ref);
+  path = gtk_tree_row_reference_get_path(ref);
   gtk_tree_model_get_iter(model, &iter, path);
+
+  i = gtk_tree_path_get_indices(path);
+  list_delete_entry(i[0]);
+
   gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 }
 
@@ -250,7 +255,7 @@ static void remove_events(GtkButton *remove, GtkTreeView *treeview) {
   ptr = rows;
   while (ptr != NULL) {
     ref = gtk_tree_row_reference_new(model, (GtkTreePath*)ptr->data);
-    references = g_list_prepend(references, gtk_tree_row_reference_copy (ref));
+    references = g_list_prepend(references, gtk_tree_row_reference_copy(ref));
     gtk_tree_row_reference_free(ref);
     ptr = ptr->next;
   }

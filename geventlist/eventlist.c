@@ -241,6 +241,23 @@ void list_sort(void) {
   if (has_change == 1) list_sort();
 }
 
+int list_delete_entry(int entry_idx) {
+  int i, is_deleted = 0;
+  for (i = 0; i < list_length; i++) {
+
+    if (i == entry_idx) {
+      is_deleted = 1;
+    } else if (is_deleted == 1) {
+      list[i-1] = list[i];
+    }
+  }
+  if (is_deleted == 1) {
+    list_length--;
+    return 1;
+  }
+  return 0;
+}
+
 void list_save(void) {
   FILE *fp;
   if ((fp = fopen(user_file, "w+")) == NULL) {
