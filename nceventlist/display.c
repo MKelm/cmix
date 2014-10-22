@@ -242,8 +242,12 @@ void display_list(void) {
 
     snprintf(
       text, sizeof(text),
-      "* %d.%d.%d: %s %s",
-      list[c].date.day, list[c].date.month, list[c].date.year, list[c].text,
+      "* %s%d.%s%d.%d, %s%d:%s%d: %s %s",
+      (list[c].date.day < 10) ? "0" : "", list[c].date.day,
+      (list[c].date.month < 10) ? "0" : "", list[c].date.month, list[c].date.year,
+      (list[c].time.hour < 10) ? "0" : "", list[c].time.hour,
+      (list[c].time.minute < 10) ? "0" : "", list[c].time.minute,
+      list[c].text,
       ((list[c].is_birthday == 1) ?
         phrases_data.entry_birthday : (list[c].repeat_cycle > 0) ?
           phrases_data.entry_repeat : "")
