@@ -180,33 +180,14 @@ void save_list(void) {
 
 int add_entry(void) {
 
-  if (strlen(entry_to_change.text) > 0 &&
-      entry_to_change.date.day > 0 &&
-      entry_to_change.date.month > 0 &&
-      entry_to_change.date.year > 0) {
-
+  if (strlen(entry_to_change.text) > 0) {
     if (list_length + 1 < MAX_LIST_ENTRIES) {
-      strcpy(list[list_length].text, entry_to_change.text);
-      list[list_length].date.day = entry_to_change.date.day;
-      list[list_length].date.month = entry_to_change.date.month;
-      list[list_length].date.year = entry_to_change.date.year;
-      list[list_length].time.hour = entry_to_change.time.hour;
-      list[list_length].time.minute = entry_to_change.time.minute;
-      list[list_length].is_birthday = entry_to_change.is_birthday;
-      list[list_length].repeat_cycle = entry_to_change.repeat_cycle;
+      list[list_length] = entry_to_change;
       list[list_length].next_event_time = calculate_next_event_time(&list[list_length]);
       list[list_length].last_notification_time = -1;
       list_length++;
 
       strcpy(entry_to_change.text, "");
-      entry_to_change.date.day = 0;
-      entry_to_change.date.month = 0;
-      entry_to_change.date.year = 0;
-      entry_to_change.time.hour = 0;
-      entry_to_change.time.minute = 0;
-      entry_to_change.is_birthday = 0;
-      entry_to_change.repeat_cycle = 0;
-
       return 1;
     }
   }
@@ -221,16 +202,7 @@ int del_entry(void) {
       if (i == entry_idx_to_delete) {
         is_deleted = 1;
       } else if (is_deleted == 1) {
-        strcpy(list[i-1].text, list[i].text);
-        list[i-1].date.day = list[i].date.day;
-        list[i-1].date.month = list[i].date.month;
-        list[i-1].date.year = list[i].date.year;
-        list[i-1].time.hour = list[i].time.hour;
-        list[i-1].time.minute = list[i].time.minute;
-        list[i-1].is_birthday = list[i].is_birthday;
-        list[i-1].repeat_cycle = list[i].repeat_cycle;
-        list[i-1].next_event_time = list[i].next_event_time;
-        list[i-1].last_notification_time = list[i].last_notification_time;
+        list[i-1] = list[i];
       }
     }
     if (is_deleted == 1) {
@@ -257,38 +229,9 @@ void sort_list(void) {
        ) {
       has_change = 1;
 
-      strcpy(tmp_entry.text, list[i].text);
-      tmp_entry.date.day = list[i].date.day;
-      tmp_entry.date.month = list[i].date.month;
-      tmp_entry.date.year = list[i].date.year;
-      tmp_entry.time.hour = list[i].time.hour;
-      tmp_entry.time.minute = list[i].time.minute;
-      tmp_entry.is_birthday = list[i].is_birthday;
-      tmp_entry.repeat_cycle = list[i].repeat_cycle;
-      tmp_entry.next_event_time = list[i].next_event_time;
-      tmp_entry.last_notification_time = list[i].last_notification_time;
-
-      strcpy(list[i].text, list[i+1].text);
-      list[i].date.day = list[i+1].date.day;
-      list[i].date.month = list[i+1].date.month;
-      list[i].date.year = list[i+1].date.year;
-      list[i].time.hour = list[i+1].time.hour;
-      list[i].time.minute = list[i+1].time.minute;
-      list[i].is_birthday = list[i+1].is_birthday;
-      list[i].repeat_cycle = list[i+1].repeat_cycle;
-      list[i].next_event_time = list[i+1].next_event_time;
-      list[i].last_notification_time = list[i+1].last_notification_time;
-
-      strcpy(list[i+1].text, tmp_entry.text);
-      list[i+1].date.day = tmp_entry.date.day;
-      list[i+1].date.month = tmp_entry.date.month;
-      list[i+1].date.year = tmp_entry.date.year;
-      list[i+1].time.hour = tmp_entry.time.hour;
-      list[i+1].time.minute = tmp_entry.time.minute;
-      list[i+1].is_birthday = tmp_entry.is_birthday;
-      list[i+1].repeat_cycle = tmp_entry.repeat_cycle;
-      list[i+1].next_event_time = tmp_entry.next_event_time;
-      list[i+1].last_notification_time = tmp_entry.last_notification_time;
+      tmp_entry = list[i];
+      list[i] = list[i+1];
+      list[i+1] = tmp_entry;
     }
   }
   if (has_change == 1) sort_list();
