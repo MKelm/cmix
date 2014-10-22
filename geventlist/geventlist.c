@@ -28,7 +28,7 @@ static void remove_events(GtkButton*, GtkTreeView*);
 
 int main (int argc, char *argv[]) {
 
-  char lang[128] = "en-US";
+  char lang[128] = "de-DE";
   guint j, notify_time_cycle = 0;
 
   if (argc > 2) {

@@ -139,7 +139,7 @@ int calculate_next_event_time(struct list_entry *current_entry) {
   entry_tm.tm_hour = current_entry->time.hour;
   entry_tm.tm_min = current_entry->time.minute;
   entry_tm.tm_sec = 0;
-  entry_tm.tm_isdst = 0;
+  entry_tm.tm_isdst = -1;
   time_t entry_t = mktime(&entry_tm);
 
   if (current_entry->is_birthday == 0) {
