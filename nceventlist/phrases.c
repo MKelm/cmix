@@ -13,11 +13,24 @@ void phrases_set_lang(char *lang) {
 
 void phrases_load(void) {
   int linenum = 0, run = 1;
-  char line[1024], file_location[256];
+  char line[1024], file_location[520], file_location_parts[10][52];
 
-  ssize_t len = readlink("/proc/self/exe", file_location, sizeof(file_location));
-  if (len != -1)
-    file_location[len-3] = '\0';
+  readlink("/proc/self/exe", file_location, sizeof(file_location));
+
+  char *ptr;
+  ptr = strtok(file_location, "/");
+  int i = 0, j = 0;
+  while (ptr != NULL) {
+    strncpy(file_location_parts[i], ptr, sizeof(file_location_parts[i]));
+    ptr = strtok(NULL, "/");
+    i++;
+  }
+  i--;
+  strncpy(file_location, "/", sizeof(file_location));
+  for (j = 0; j < i; j++) {
+    strcat(file_location, file_location_parts[j]);
+    strcat(file_location, "/");
+  }
 
   strcat(file_location, FILE_DIR_PHRASES);
   strcat(file_location, phrases_lang);
