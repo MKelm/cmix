@@ -127,7 +127,14 @@ int calculate_next_event_time(struct list_entry *current_entry) {
   if (current_entry->is_birthday == 1) {
     if (current_entry->date.month - 1 < tm.tm_mon ||
         (current_entry->date.month - 1 == tm.tm_mon &&
-         current_entry->date.day < tm.tm_mday)) {
+         current_entry->date.day < tm.tm_mday) ||
+        (current_entry->date.month - 1 == tm.tm_mon &&
+         current_entry->date.day == tm.tm_mday &&
+         current_entry->time.hour < tm.tm_hour) ||
+        (current_entry->date.month - 1 == tm.tm_mon &&
+         current_entry->date.day == tm.tm_mday &&
+         current_entry->time.hour == tm.tm_hour &&
+         current_entry->time.minute < tm.tm_min)) {
       plus_years = 1;
     }
   }
@@ -139,12 +146,15 @@ int calculate_next_event_time(struct list_entry *current_entry) {
   entry_tm.tm_hour = current_entry->time.hour;
   entry_tm.tm_min = current_entry->time.minute;
   entry_tm.tm_sec = 0;
-  entry_tm.tm_isdst = -1;
+  entry_tm.tm_isdst = tm.tm_isdst;
   time_t entry_t = mktime(&entry_tm);
 
-  if (current_entry->is_birthday == 0) {
+  if (current_entry->is_birthday == 0 && current_entry->repeat_cycle > 0) {
+    if (tm.tm_isdst == 1) {
+      entry_t += 3600;
+    }
     while (entry_t < t) {
-      entry_t += current_entry->repeat_cycle * 60 * 60 * 24;
+      entry_t += current_entry->repeat_cycle * 3600 * 24;
     }
   }
 

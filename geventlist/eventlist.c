@@ -180,14 +180,21 @@ void list_load(void) {
 }
 
 int calculate_next_event_time(st_list_entry *current_entry) {
-  time_t t = time(NULL);
-  struct tm tm = *localtime(&t);
+  time_t t = time(NULL); // current calendar time
+  struct tm tm = *localtime(&t); // calendar time to location time
 
   int plus_years = 0;
   if (current_entry->is_birthday == 1) {
     if (current_entry->date.month - 1 < tm.tm_mon ||
         (current_entry->date.month - 1 == tm.tm_mon &&
-         current_entry->date.day < tm.tm_mday)) {
+         current_entry->date.day < tm.tm_mday) ||
+        (current_entry->date.month - 1 == tm.tm_mon &&
+         current_entry->date.day == tm.tm_mday &&
+         current_entry->time.hour < tm.tm_hour) ||
+        (current_entry->date.month - 1 == tm.tm_mon &&
+         current_entry->date.day == tm.tm_mday &&
+         current_entry->time.hour == tm.tm_hour &&
+         current_entry->time.minute < tm.tm_min)) {
       plus_years = 1;
     }
   }
@@ -199,21 +206,24 @@ int calculate_next_event_time(st_list_entry *current_entry) {
   entry_tm.tm_hour = current_entry->time.hour;
   entry_tm.tm_min = current_entry->time.minute;
   entry_tm.tm_sec = 0;
-  entry_tm.tm_isdst = -1;
-  time_t entry_t = mktime(&entry_tm);
+  entry_tm.tm_isdst = tm.tm_isdst;
+  time_t entry_t = mktime(&entry_tm); // change location time struct to calendar time
 
   if (current_entry->is_birthday == 0 && current_entry->repeat_cycle == 0 &&
       entry_t < t) {
     return -1;
   }
 
-  if (current_entry->is_birthday == 0) {
+  if (current_entry->is_birthday == 0 && current_entry->repeat_cycle > 0) {
+    if (tm.tm_isdst == 1) {
+      entry_t += 3600;
+    }
     while (entry_t < t) {
-      entry_t += current_entry->repeat_cycle * 60 * 60 * 24;
+      entry_t += current_entry->repeat_cycle * 3600 * 24;
     }
   }
 
-  entry_tm = *localtime(&entry_t);
+  entry_tm = *localtime(&entry_t); // calendar time to location time
   // set current entry time to next
   current_entry->date.year = entry_tm.tm_year + 1900;
   current_entry->date.month = entry_tm.tm_mon + 1;
