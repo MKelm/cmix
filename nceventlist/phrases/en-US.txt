@@ -19,7 +19,7 @@ Birthday event
 Text
 Date
 Time
-Repeat cycle
+Cycle
 First name
 Last name
 Event

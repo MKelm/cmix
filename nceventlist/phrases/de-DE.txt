@@ -19,7 +19,7 @@ Geburtstag-Event
 Text
 Datum
 Zeit
-Wdhl.-Zyklus
+Zyklus
 Vorname
 Name
 Ereignis
