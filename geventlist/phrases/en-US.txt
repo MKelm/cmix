@@ -9,3 +9,4 @@ DD.MM.YYYY
 Single
 Repeating
 Birthday
+Event

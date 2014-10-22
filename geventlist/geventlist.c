@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <stdlib.h>
 #include <string.h>
 #include "eventlist.h"
 #include "phrases.h"
@@ -26,11 +27,31 @@ static void add_event(GtkButton*, GtkTreeView*);
 static void remove_events(GtkButton*, GtkTreeView*);
 
 int main (int argc, char *argv[]) {
-  phrases_set_lang("de-DE");
-  phrases_load();
 
+  char lang[128] = "en-US";
+  guint j, notify_time_cycle = 0;
+
+  if (argc > 2) {
+    for (j = 1; j < argc; j++) {
+      if (strcmp(argv[j], "-notify") == 0 && atoi(argv[j+1]) > 0) {
+        notify_time_cycle = atoi(argv[j+1]);
+      }
+      if (strcmp(argv[j], "-lang") == 0 && strlen(argv[j+1]) > 0) {
+        strncpy(lang, argv[j+1], sizeof(lang));
+      }
+      j++;
+    }
+  }
+
+  phrases_set_lang(lang);
+  phrases_load();
   list_get_file();
+
+  if (notify_time_cycle > 0) {
+    notification_service(notify_time_cycle);
+  }
   list_load();
+  list_sort();
 
   GtkWidget *window, *vbox, *treeview, *scrolled_win;
   GtkWidget *hbox_buttons, *button_add, *button_remove;

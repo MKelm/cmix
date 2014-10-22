@@ -77,6 +77,9 @@ void phrases_load(void) {
         case 10:
           strncpy(phrases_data.option_type_birthday, chunk, sizeof(phrases_data.option_type_birthday));
           break;
+        case 11:
+          strncpy(phrases_data.message_event, chunk, sizeof(phrases_data.message_event));
+          break;
       }
       strncpy(chunk, "", sizeof(chunk));
       linenum++;

@@ -43,3 +43,6 @@ void list_sort(void);
 int list_delete_entry(int entry_idx);
 
 void list_save(void);
+
+void send_next_notification(void);
+void notification_service(int sleep_seconds);

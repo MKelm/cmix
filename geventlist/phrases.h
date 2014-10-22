@@ -15,6 +15,7 @@ typedef struct {
   char option_type_single[PHRASES_CHARS_LENGTH];
   char option_type_repeating[PHRASES_CHARS_LENGTH];
   char option_type_birthday[PHRASES_CHARS_LENGTH];
+  char message_event[PHRASES_CHARS_LENGTH];
 } st_phrases;
 
 void phrases_set_lang(char *lang);

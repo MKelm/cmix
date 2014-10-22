@@ -177,8 +177,6 @@ void list_load(void) {
     i++;
   }
   fclose(fp);
-
-  list_sort();
 }
 
 int calculate_next_event_time(st_list_entry *current_entry) {
@@ -292,4 +290,62 @@ void list_save(void) {
     i++;
   }
   fclose(fp);
+}
+
+void send_next_notification(void) {
+  char message[256], call[256];
+  int i;
+  time_t t = time(NULL);
+  int w2pre, w1pre, d3pre, d1pre;
+
+  for (i = 0; i < list_length; i++) {
+    w2pre = list[i].next_event_time - (2 * 7 * 24 * 60 * 60);
+    w1pre = list[i].next_event_time - (1 * 7 * 24 * 60 * 60);
+    d3pre = list[i].next_event_time - (3 * 24 * 60 * 60);
+    d1pre = list[i].next_event_time - (1 * 24 * 60 * 60);
+
+    if ((t > w2pre && t < w1pre && list[i].last_notification_time < w2pre) ||
+        (t > w1pre && t < d3pre && list[i].last_notification_time < w1pre) ||
+        (t > d3pre && t < d1pre && list[i].last_notification_time < d3pre) ||
+        (t > d1pre && t < list[i].next_event_time && list[i].last_notification_time < d1pre)) {
+
+      list[i].last_notification_time = t;
+
+      if (list[i].is_birthday == 1) {
+        snprintf(
+          message, sizeof(message), "%hd.%hd. %s %s",
+          list[i].date.day, list[i].date.month, list[i].text,
+          phrases_data.option_type_birthday
+        );
+      } else {
+        snprintf(
+          message, sizeof(message), "%hd.%hd. %hd:%hd %s",
+          list[i].date.day, list[i].date.month,
+          list[i].time.hour, list[i].time.minute, list[i].text
+        );
+      }
+
+      snprintf(
+        call,
+        sizeof(call),
+        "%s \"%s\" \"%s\"",
+        "notify-send -i /usr/share/icons/gnome/48x48/status/appointment-soon.png",
+        phrases_data.message_event,
+        message
+      );
+      system(call);
+    }
+  }
+}
+
+void notification_service(int sleep_seconds) {
+  while (1) {
+    list_load();
+    list_sort();
+    send_next_notification();
+    fflush(stdout);
+    list_save();
+    sleep(sleep_seconds);
+  }
+  exit(EXIT_SUCCESS);
 }
