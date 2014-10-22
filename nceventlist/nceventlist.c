@@ -220,12 +220,21 @@ void sort_list(void) {
   struct list_entry tmp_entry;
 
   for (i = 0; i < list_length - 1; i++) {
-    if (list[i].date.year > list[i+1].date.year ||
-        (list[i].date.year == list[i+1].date.year &&
+    if (list[i].date.year > list[i+1].date.year || // greater year
+        (list[i].date.year == list[i+1].date.year && // greater month
          list[i].date.month > list[i+1].date.month) ||
-        (list[i].date.year == list[i+1].date.year &&
+        (list[i].date.year == list[i+1].date.year && // greater day
          list[i].date.month == list[i+1].date.month &&
-         list[i].date.day > list[i+1].date.day)
+         list[i].date.day > list[i+1].date.day) ||
+        (list[i].date.year == list[i+1].date.year && // greater hour
+         list[i].date.month == list[i+1].date.month &&
+         list[i].date.day == list[i+1].date.day &&
+         list[i].time.hour > list[i+1].time.hour) ||
+        (list[i].date.year == list[i+1].date.year && // greater minute
+         list[i].date.month == list[i+1].date.month &&
+         list[i].date.day == list[i+1].date.day &&
+         list[i].time.hour == list[i+1].time.hour &&
+         list[i].time.minute > list[i+1].time.minute)
        ) {
       has_change = 1;
 
