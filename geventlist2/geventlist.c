@@ -138,6 +138,23 @@ int main (int argc, char *argv[]) {
   window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
   data.treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview1"));
 
+  GtkTreeSelection *selection;
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(data.treeview));
+  gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
+
+  /*model = gtk_tree_view_get_model(GTK_TREE_VIEW(data->treeview));
+  guint i = 0;
+  while (i < list_length) {
+    st_gtk_list_item temp = get_gtk_list_item(i);
+
+    gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+    gtk_list_store_set(GTK_LIST_STORE(model), &iter,
+      0, temp.type, 1, temp.date, 2, temp.time,
+      3, temp.text, 4, temp.cycle, -1
+    );
+    i++;
+  }*/
+
   gtk_builder_connect_signals(builder, &data);
   g_object_unref(G_OBJECT(builder));
 
