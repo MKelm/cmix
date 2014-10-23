@@ -6,6 +6,7 @@
 !*.h
 !*.txt
 !*.json
+!*.ui
 !/misc
 !/chanoi
 !/cgblist
@@ -16,3 +17,4 @@
 !/ripdifm/jsmn
 !/geventlist
 !/geventlist/phrases
+!/geventlist2
