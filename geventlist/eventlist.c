@@ -215,11 +215,15 @@ int calculate_next_event_time(st_list_entry *current_entry) {
   }
 
   if (current_entry->is_birthday == 0 && current_entry->repeat_cycle > 0) {
-    if (tm.tm_isdst == 1) {
-      entry_t += 3600;
-    }
     while (entry_t < t) {
       entry_t += current_entry->repeat_cycle * 3600 * 24;
+    }
+    entry_tm = *localtime(&entry_t);
+    // handle time diff, isdst 1 = summer time, 0 = winter time
+    if (tm.tm_isdst == 1 && entry_tm.tm_isdst == 0) {
+      entry_t += 3600;
+    } else if (tm.tm_isdst == 0 && entry_tm.tm_isdst == 1) {
+      entry_t -= 3600;
     }
   }
 
