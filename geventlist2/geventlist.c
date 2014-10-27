@@ -109,7 +109,12 @@ void on_button_add1_clicked(GtkWidget *button, Data *data) {
   GtkWidget *dialog;
 
   builder = gtk_builder_new();
-  gtk_builder_add_from_file(builder, "dialog.ui", NULL);
+
+  gchar dialog_ui_dir[1000];
+  strncpy(dialog_ui_dir, exec_dir, 1000);
+  strcat(dialog_ui_dir, "dialog.ui");
+
+  gtk_builder_add_from_file(builder, dialog_ui_dir, NULL);
 
   dialog = GTK_WIDGET(gtk_builder_get_object(builder, "dialog1"));
 
@@ -155,7 +160,10 @@ int main (int argc, char *argv[]) {
   init_exec_dir();
 
   setlocale(LC_ALL, "");
-  bindtextdomain("geventlist", strcat(exec_dir, "locale"));
+  gchar locale_dir[1000];
+  strncpy(locale_dir, exec_dir, 1000);
+  strcat(locale_dir, "locale");
+  bindtextdomain("geventlist", locale_dir);
   textdomain("geventlist");
 
   //list_get_file();
@@ -164,7 +172,11 @@ int main (int argc, char *argv[]) {
 
   gtk_init(&argc, &argv);
   builder = gtk_builder_new();
-  gtk_builder_add_from_file(builder, "window.ui", NULL);
+
+  gchar window_ui_dir[1000];
+  strncpy(window_ui_dir, exec_dir, 1000);
+  strcat(window_ui_dir, "window.ui");
+  gtk_builder_add_from_file(builder, window_ui_dir, NULL);
 
   window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
   data.treeview = GTK_WIDGET(gtk_builder_get_object(builder, "treeview1"));
