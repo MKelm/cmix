@@ -22,3 +22,6 @@
 !/geventlist
 !/geventlist/phrases
 !/geventlist2
+!/geventlist2/locale
+!/geventlist2/locale/de
+!/geventlist2/locale/de/LC_MESSAGES

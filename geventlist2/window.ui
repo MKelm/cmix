@@ -15,15 +15,6 @@
       <!-- column-name cycle -->
       <column type="guint"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Geburtstag</col>
-        <col id="1" translatable="yes">01.01.2016</col>
-        <col id="2" translatable="yes">00:00</col>
-        <col id="3" translatable="yes">Test</col>
-        <col id="4">0</col>
-      </row>
-    </data>
   </object>
   <object class="GtkWindow" id="window1">
     <property name="can_focus">False</property>
@@ -45,7 +36,7 @@
             <property name="rubber_banding">True</property>
             <child>
               <object class="GtkTreeViewColumn" id="typecol">
-                <property name="title" translatable="yes">Typ</property>
+                <property name="title" translatable="yes">Type</property>
                 <child>
                   <object class="GtkCellRendererText" id="typecell"/>
                   <attributes>
@@ -56,7 +47,7 @@
             </child>
             <child>
               <object class="GtkTreeViewColumn" id="datecol">
-                <property name="title" translatable="yes">Datum</property>
+                <property name="title" translatable="yes">Date</property>
                 <child>
                   <object class="GtkCellRendererText" id="datecell"/>
                   <attributes>
@@ -67,7 +58,7 @@
             </child>
             <child>
               <object class="GtkTreeViewColumn" id="timecol">
-                <property name="title" translatable="yes">Zeit</property>
+                <property name="title" translatable="yes">Time</property>
                 <child>
                   <object class="GtkCellRendererText" id="timecell"/>
                   <attributes>
@@ -89,7 +80,7 @@
             </child>
             <child>
               <object class="GtkTreeViewColumn" id="cyclecol">
-                <property name="title" translatable="yes">Zyklus</property>
+                <property name="title" translatable="yes">Cycle</property>
                 <child>
                   <object class="GtkCellRendererText" id="cyclecell"/>
                   <attributes>
@@ -111,7 +102,7 @@
             <property name="can_focus">False</property>
             <child>
               <object class="GtkButton" id="button_add1">
-                <property name="label" translatable="yes">Hinzufügen</property>
+                <property name="label" translatable="yes">Add</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -126,7 +117,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button_remove1">
-                <property name="label" translatable="yes">Entfernen</property>
+                <property name="label" translatable="yes">Remove</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

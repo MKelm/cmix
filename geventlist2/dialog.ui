@@ -10,7 +10,7 @@
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Ereignis hinzufügen</property>
+    <property name="title" translatable="yes">Add event</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialog_vbox1">
@@ -69,11 +69,8 @@
             <property name="column_spacing">5</property>
             <property name="row_spacing">5</property>
             <child>
-              <placeholder/>
-            </child>
-            <child>
               <object class="GtkCheckButton" id="checkbutton_is_birthday1">
-                <property name="label" translatable="yes">ist Geburtstag</property>
+                <property name="label" translatable="yes">is birthday</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
@@ -89,7 +86,7 @@
               <object class="GtkLabel" id="label_date1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Datum:</property>
+                <property name="label" translatable="yes">Date:</property>
               </object>
               <packing>
                 <property name="top_attach">1</property>
@@ -100,7 +97,7 @@
               <object class="GtkLabel" id="label_time1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Zeit:</property>
+                <property name="label" translatable="yes">Time:</property>
               </object>
               <packing>
                 <property name="top_attach">2</property>
@@ -122,7 +119,7 @@
               <object class="GtkLabel" id="label_cycle1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Zyklus:</property>
+                <property name="label" translatable="yes">Cycle:</property>
               </object>
               <packing>
                 <property name="top_attach">4</property>
@@ -134,7 +131,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
-                <property name="text" translatable="yes">TT.MM.JJJJ</property>
+                <property name="text" translatable="yes">DD.MM.YYYY</property>
                 <property name="primary_icon_activatable">False</property>
                 <property name="secondary_icon_activatable">False</property>
                 <property name="primary_icon_sensitive">True</property>
@@ -202,6 +199,9 @@
                 <property name="top_attach">4</property>
                 <property name="bottom_attach">5</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
           </object>
           <packing>

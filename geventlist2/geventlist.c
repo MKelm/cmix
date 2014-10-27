@@ -1,5 +1,7 @@
 #include <gtk/gtk.h>
 #include <string.h>
+#include <locale.h>
+#include <libintl.h>
 
 typedef struct {
   GtkWidget *treeview;
@@ -65,16 +67,16 @@ void on_dialog_button_ok1_clicked(GtkWidget *button, Data *data) {
   rcycle = (gint)gtk_spin_button_get_value(GTK_SPIN_BUTTON(data->input_dlg_cycle));
 
   if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->input_dlg_is_birthday)) == TRUE) {
-    strcpy(type_str, "Geburtstag");
+    strcpy(type_str, gettext("Birthday"));
   } else if (rcycle > 0) {
-    strcpy(type_str, "Wiederholend");
+    strcpy(type_str, gettext("Repeating"));
   } else {
-    strcpy(type_str, "Einzelnd");
+    strcpy(type_str, gettext("Single"));
   }
 
-  if (g_ascii_strcasecmp(date, "") == 0 || g_ascii_strcasecmp(date, "DD.MM.JJJJ") == 0 ||
+  if (g_ascii_strcasecmp(date, "") == 0 || g_ascii_strcasecmp(date, gettext("DD.MM.YYYY")) == 0 ||
       g_ascii_strcasecmp(time, "") == 0 || g_ascii_strcasecmp(text, "") == 0) {
-    g_warning("Kann Ereignis nicht hinzufügen, nicht genug Daten gegeben!");
+    g_warning(gettext("Cannot add event, not enough data given."));
     return;
   }
 
@@ -96,7 +98,7 @@ void on_dialog_button_ok1_clicked(GtkWidget *button, Data *data) {
       0, type_str, 1, date, 2, time, 3, text, 4, rcycle, -1
     );
   } else {
-    g_warning("Kann Ereignis nicht hinzufügen, Fehler beim Einfügen in Liste!");
+    g_warning(gettext("Cannot add event, error while adding data to list."));
   }
 }
 
@@ -123,6 +125,21 @@ void on_button_add1_clicked(GtkWidget *button, Data *data) {
 }
 
 int main (int argc, char *argv[]) {
+  // Set the current local to default
+  setlocale(LC_ALL, "");
+
+  // bindtextdomain(DOMAINNAME, DIRNAME)
+  //
+  // Specify that the DOMAINNAME message catalog
+  // will be found in DIRNAME rather than in
+  // the system locale data base.
+  bindtextdomain("geventlist", "./locale");
+
+  // textdomain(DOMAINNAME)
+  //
+  // Set the current default message catalog to DOMAINNAME.
+  textdomain("geventlist");
+
   GtkBuilder *builder;
   GtkWidget *window;
   Data data;
