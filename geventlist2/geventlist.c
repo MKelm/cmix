@@ -12,6 +12,8 @@ typedef struct {
   GtkWidget *input_dlg_cycle;
 } Data;
 
+gchar exec_dir[1000];
+
 void on_window1_destroy(GtkWidget *window, Data *data) {
   //list_save();
   gtk_main_quit();
@@ -124,25 +126,37 @@ void on_button_add1_clicked(GtkWidget *button, Data *data) {
   gtk_widget_destroy(dialog);
 }
 
+void init_exec_dir(void) {
+  char exec_dir_parts[10][100];
+
+  readlink("/proc/self/exe", exec_dir, sizeof(exec_dir));
+
+  char *ptr;
+  ptr = strtok(exec_dir, "/");
+  int i = 0, j = 0;
+  while (ptr != NULL) {
+    strncpy(exec_dir_parts[i], ptr, sizeof(exec_dir_parts[i]));
+    ptr = strtok(NULL, "/");
+    i++;
+  }
+  i--;
+  strncpy(exec_dir, "/", sizeof(exec_dir));
+  for (j = 0; j < i; j++) {
+    strcat(exec_dir, exec_dir_parts[j]);
+    strcat(exec_dir, "/");
+  }
+}
+
 int main (int argc, char *argv[]) {
-  // Set the current local to default
-  setlocale(LC_ALL, "");
-
-  // bindtextdomain(DOMAINNAME, DIRNAME)
-  //
-  // Specify that the DOMAINNAME message catalog
-  // will be found in DIRNAME rather than in
-  // the system locale data base.
-  bindtextdomain("geventlist", "./locale");
-
-  // textdomain(DOMAINNAME)
-  //
-  // Set the current default message catalog to DOMAINNAME.
-  textdomain("geventlist");
-
   GtkBuilder *builder;
   GtkWidget *window;
   Data data;
+
+  init_exec_dir();
+
+  setlocale(LC_ALL, "");
+  bindtextdomain("geventlist", strcat(exec_dir, "locale"));
+  textdomain("geventlist");
 
   //list_get_file();
   //list_load();
