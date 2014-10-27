@@ -7,7 +7,11 @@
 !*.txt
 !*.json
 !*.ui
+!*.po
+!*.pot
+!*.mo
 !/misc
+!/misc/po
 !/chanoi
 !/cgblist
 !/ncgblist
